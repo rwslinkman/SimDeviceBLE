@@ -27,7 +27,7 @@ class HomeFragment : Fragment() {
         // TODO: Add button to start permission flow
 
         // TODO: Add advertisement status card (gray out if disabled)
-        // TODO: Add Primary Service selector
+        // TODO: Add device selector
         // TODO: Add connectable switch
         // TODO: Add broadcast device name switch
         // TODO: Add button to start/stop advertising

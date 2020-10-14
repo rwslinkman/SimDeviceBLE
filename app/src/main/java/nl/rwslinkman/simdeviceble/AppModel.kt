@@ -2,7 +2,7 @@ package nl.rwslinkman.simdeviceble
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import nl.rwslinkman.simdeviceble.device.Peripheral
+import nl.rwslinkman.simdeviceble.device.model.Device
 
 class AppModel: ViewModel() {
 
@@ -11,9 +11,13 @@ class AppModel: ViewModel() {
     val bluetoothAdvertisingSupported: MutableLiveData<Boolean> = MutableLiveData()
     val isAdvertising: MutableLiveData<Boolean> = MutableLiveData()
 
-    val activeDevice: Peripheral? = null
+    val activeDevice: MutableLiveData<Device> = MutableLiveData()
 
     fun enableBluetooth() {
         // TODO
+    }
+
+    fun advertiseDevice(device: Device) {
+        // TODO:
     }
 }

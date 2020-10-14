@@ -20,6 +20,13 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+        // TODO: Show list of all available devices as card (rename fragment)
+
+        // TODO: Device card
+        // TODO: Device name (label), primary service
+        // TODO: Expandable list to show services & characteristics in device
+        // TODO: "Advertise now" button
+
         dashboardViewModel =
             ViewModelProviders.of(this).get(DashboardViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
