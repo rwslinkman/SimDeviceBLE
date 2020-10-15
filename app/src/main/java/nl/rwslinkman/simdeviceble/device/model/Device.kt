@@ -1,5 +1,9 @@
 package nl.rwslinkman.simdeviceble.device.model
 
+import java.util.*
+
 interface Device {
-    // TODO: label, primary service, services
+    val name: String
+    val primaryServiceUuid: UUID
+    val services: List<Service>
 }

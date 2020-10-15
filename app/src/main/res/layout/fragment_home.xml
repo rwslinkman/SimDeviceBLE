@@ -8,6 +8,7 @@
     tools:context=".ui.home.HomeFragment">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/block_bluetooth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
@@ -39,7 +40,7 @@
                     <TextView
                         android:id="@+id/ble_status_supported_label"
                         android:layout_width="wrap_content"
-                        android:layout_height="20dp"
+                        android:layout_height="wrap_content"
                         android:layout_column="2"
                         android:gravity="start"
                         android:text="Bluetooth supported"
@@ -48,7 +49,7 @@
                     <TextView
                         android:id="@+id/ble_status_supported_value"
                         android:layout_width="wrap_content"
-                        android:layout_height="20dp"
+                        android:layout_height="wrap_content"
                         android:layout_column="3"
                         android:gravity="center|end"
                         android:text="No"
@@ -58,14 +59,14 @@
 
                 <TableRow
                     android:animateLayoutChanges="true"
-                    android:visibility="visible">
+                    android:visibility="visible"
+                    android:layout_marginTop="12dp">
 
                     <TextView
                         android:id="@+id/ble_status_advertising_label"
                         android:layout_width="wrap_content"
-                        android:layout_height="20dp"
+                        android:layout_height="wrap_content"
                         android:layout_column="2"
-                        android:layout_marginTop="12dp"
                         android:gravity="start"
                         android:text="Bluetooth Advertising supported"
                         android:textSize="16sp" />
@@ -73,9 +74,8 @@
                     <TextView
                         android:id="@+id/ble_status_advertising_value"
                         android:layout_width="wrap_content"
-                        android:layout_height="20dp"
+                        android:layout_height="wrap_content"
                         android:layout_column="3"
-                        android:layout_marginTop="12dp"
                         android:gravity="end"
                         android:text="No"
                         android:textSize="12sp" />
@@ -84,14 +84,14 @@
 
                 <TableRow
                     android:animateLayoutChanges="true"
-                    android:visibility="visible">
+                    android:visibility="visible"
+                    android:layout_marginTop="12dp">
 
                     <TextView
                         android:id="@+id/ble_status_enabled_label"
                         android:layout_width="wrap_content"
-                        android:layout_height="20dp"
+                        android:layout_height="wrap_content"
                         android:layout_column="2"
-                        android:layout_marginTop="12dp"
                         android:gravity="start"
                         android:text="Bluetooth enabled"
                         android:textSize="16sp" />
@@ -99,9 +99,33 @@
                     <TextView
                         android:id="@+id/ble_status_enabled_value"
                         android:layout_width="wrap_content"
-                        android:layout_height="20dp"
+                        android:layout_height="wrap_content"
                         android:layout_column="3"
-                        android:layout_marginTop="12dp"
+                        android:gravity="end"
+                        android:text="No"
+                        android:textSize="12sp" />
+
+                </TableRow>
+
+                <TableRow
+                    android:animateLayoutChanges="true"
+                    android:visibility="visible"
+                    android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:id="@+id/location_enabled_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="2"
+                        android:gravity="start"
+                        android:text="Location permission granted"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/location_enabled_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="3"
                         android:gravity="end"
                         android:text="No"
                         android:textSize="12sp" />
@@ -109,6 +133,194 @@
                 </TableRow>
 
             </TableLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:weightSum="2"
+                >
+
+                <Button
+                    android:id="@+id/ble_enable_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginTop="12dp"
+                    android:text="Turn on Bluetooth"
+                    />
+
+                <Button
+                    android:id="@+id/location_permission_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginTop="12dp"
+                    android:text="Grant permission"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/block_bluetooth">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Advertising"
+                android:textSize="20sp"
+                android:layout_marginBottom="8dp"
+                />
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="3">
+
+                <TableRow
+                    android:animateLayoutChanges="true"
+                    android:visibility="visible"
+                    android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:id="@+id/advertising_enabled_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="2"
+                        android:gravity="start"
+                        android:text="Advertising enabled"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/advertising_enabled_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="3"
+                        android:gravity="center|end"
+                        android:text="No"
+                        android:textSize="12sp" />
+
+                </TableRow>
+
+                <TableRow
+                    android:animateLayoutChanges="true"
+                    android:visibility="visible"
+                    android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:id="@+id/advertising_name_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="2"
+                        android:gravity="start"
+                        android:text="Advertisement name"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/advertising_name_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="3"
+                        android:gravity="center|end"
+                        android:text="Unknown"
+                        android:textSize="12sp" />
+
+                </TableRow>
+
+                <TableRow
+                    android:animateLayoutChanges="true"
+                    android:visibility="visible"
+                    android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:id="@+id/advertising_device_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="2"
+                        android:gravity="start"
+                        android:text="Advertise as device"
+                        android:textSize="16sp"
+                        />
+
+                    <Spinner
+                        android:id="@+id/advertising_device_value"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_column="3"
+                        android:gravity="end"
+                        android:textSize="12sp"
+                        />
+
+                </TableRow>
+
+                <TableRow
+                    android:animateLayoutChanges="true"
+                    android:visibility="visible"
+                    android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:id="@+id/advertising_connectable_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="2"
+                        android:gravity="start"
+                        android:text="Connectable"
+                        android:textSize="16sp"
+                        />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/advertising_connectable_value"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_column="3"
+                        android:gravity="end"
+                        />
+
+                </TableRow>
+
+            </TableLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:weightSum="2"
+                >
+
+                <Button
+                    android:id="@+id/advertising_start_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginTop="12dp"
+                    android:text="Start advertising"
+                    />
+
+                <Button
+                    android:id="@+id/advertising_stop_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginTop="12dp"
+                    android:text="Stop advertising"
+                    />
+
+            </LinearLayout>
 
         </LinearLayout>
 

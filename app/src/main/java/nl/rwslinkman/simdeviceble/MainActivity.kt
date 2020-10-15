@@ -1,7 +1,8 @@
 package nl.rwslinkman.simdeviceble
 
 import android.bluetooth.BluetoothAdapter
-import android.content.Intent
+import android.bluetooth.BluetoothManager
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -23,9 +24,19 @@ class MainActivity : AppCompatActivity() {
         val model: AppModel by viewModels()
 
         val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
-        model.bluetoothSupported.value = (bluetoothAdapter != null)
-        model.bluetoothEnabled.value = bluetoothAdapter?.isEnabled
-        model.bluetoothAdvertisingSupported.value = bluetoothAdapter?.isMultipleAdvertisementSupported
+        model.bluetoothSupported.postValue(bluetoothAdapter != null)
+
+        bluetoothAdapter?.let {
+            model.bluetoothEnabled.postValue(bluetoothAdapter.isEnabled)
+            model.bluetoothAdvertisingSupported.postValue(bluetoothAdapter.isMultipleAdvertisementSupported)
+            model.advertisementName.postValue(bluetoothAdapter.name)
+            model.locationPermissionGranted.postValue( false)
+
+            val advertisementManager = AdvertisementManager(bluetoothAdapter)
+        }
+
+        val bluetoothManager : BluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+
 
         val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
@@ -37,5 +48,9 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    companion object {
+        const val TAG = "MainActivity"
     }
 }

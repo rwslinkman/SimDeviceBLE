@@ -1,10 +1,11 @@
 package nl.rwslinkman.simdeviceble.service
 
 import android.bluetooth.BluetoothGattCharacteristic
+import nl.rwslinkman.simdeviceble.device.model.Service
 import java.util.*
 
 
-class HeartRateService {
+class HeartRateService: Service {
     private val MIN_UINT = 0
     private val MAX_UINT8 = Math.pow(2.0, 8.0).toInt() - 1
     private val MAX_UINT16 = Math.pow(2.0, 16.0).toInt() - 1

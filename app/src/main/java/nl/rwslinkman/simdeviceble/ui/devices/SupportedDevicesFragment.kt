@@ -1,4 +1,4 @@
-package nl.rwslinkman.simdeviceble.ui.dashboard
+package nl.rwslinkman.simdeviceble.ui.devices
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import nl.rwslinkman.simdeviceble.R
 
-class DashboardFragment : Fragment() {
+class SupportedDevicesFragment : Fragment() {
 
     private lateinit var dashboardViewModel: DashboardViewModel
 

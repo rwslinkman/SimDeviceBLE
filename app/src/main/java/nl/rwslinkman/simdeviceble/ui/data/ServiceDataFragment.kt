@@ -1,4 +1,4 @@
-package nl.rwslinkman.simdeviceble.ui.notifications
+package nl.rwslinkman.simdeviceble.ui.data
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import nl.rwslinkman.simdeviceble.R
 
-class NotificationsFragment : Fragment() {
+class ServiceDataFragment : Fragment() {
 
     private lateinit var notificationsViewModel: NotificationsViewModel
 
