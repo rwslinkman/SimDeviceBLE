@@ -47,8 +47,7 @@ class HomeFragment : Fragment() {
         val bleEnabledTextView: TextView = root.findViewById(R.id.ble_status_enabled_value)
         val bleAdvertisingSupportedTextView: TextView =
             root.findViewById(R.id.ble_status_advertising_value)
-        val locationPermissionGrantedTextView: TextView =
-            root.findViewById(R.id.location_enabled_value)
+        val enableBluetoothBtn = root.findViewById<Button>(R.id.ble_enable_btn)
 
         appModel.bluetoothSupported.observe(this, Observer {
             bleSupportedTextView.text = if (it) "Yes" else "No"
@@ -56,32 +55,30 @@ class HomeFragment : Fragment() {
 
         appModel.bluetoothEnabled.observe(this, Observer {
             bleEnabledTextView.text = if (it) "Yes" else "No"
+
         })
 
         appModel.bluetoothAdvertisingSupported.observe(this, Observer {
             bleAdvertisingSupportedTextView.text = if (it) "Yes" else "No"
+            enableBluetoothBtn.isEnabled = !it
         })
 
-        appModel.locationPermissionGranted.observe(this, Observer {
-            locationPermissionGrantedTextView.text = if (it) "Yes" else "No"
-        })
 
-        root.findViewById<Button>(R.id.ble_enable_btn).setOnClickListener {
+        enableBluetoothBtn.setOnClickListener {
             appModel.enableBluetooth()
         }
-
-        root.findViewById<Button>(R.id.location_permission_btn).setOnClickListener {
-            appModel.startPermissionFlow()
-        }
-
 
         // Advertising
         val advertisingEnabledView: TextView = root.findViewById(R.id.advertising_enabled_value)
         val advertisementNameView: TextView = root.findViewById(R.id.advertising_name_value)
         val connectableSwitch: SwitchCompat = root.findViewById(R.id.advertising_connectable_value)
+        val advertiseStartBtn = root.findViewById<Button>(R.id.advertising_start_btn)
+        val advertiseStopBtn = root.findViewById<Button>(R.id.advertising_stop_btn)
 
         appModel.isAdvertising.observe(this, Observer {
             advertisingEnabledView.text = if (it) "Yes" else "No"
+            advertiseStartBtn.isEnabled = !it
+            advertiseStopBtn.isEnabled = it
         })
 
         appModel.advertisementName.observe(this, Observer {
@@ -89,6 +86,28 @@ class HomeFragment : Fragment() {
         })
 
         val deviceSelector: Spinner = root.findViewById(R.id.advertising_device_value)
+        setupDeviceSelector(deviceSelector)
+
+        appModel.isConnectable.observe(this, Observer {
+            connectableSwitch.isChecked = it
+        })
+
+        connectableSwitch.setOnCheckedChangeListener { _, isChecked ->
+            appModel.isConnectable.postValue(isChecked)
+        }
+
+        advertiseStartBtn.setOnClickListener {
+            appModel.startAdvertising()
+        }
+
+        advertiseStopBtn.setOnClickListener {
+            appModel.stopAdvertising()
+        }
+
+        return root
+    }
+
+    private fun setupDeviceSelector(deviceSelector: Spinner) {
         val adapter = ArrayAdapter(
             activity as Context,
             android.R.layout.simple_spinner_item,
@@ -96,30 +115,11 @@ class HomeFragment : Fragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         deviceSelector.adapter = adapter
         deviceSelector.onItemSelectedListener = selectorListener
-
-        appModel.isConnectable.observe(this, Observer {
-            connectableSwitch.isChecked = it
-        })
-        connectableSwitch.setOnCheckedChangeListener { _, isChecked ->
-            appModel.isConnectable.postValue(isChecked)
-        }
-
-        root.findViewById<Button>(R.id.advertising_start_btn).setOnClickListener {
-            val selectedDeviceName = deviceSelector.selectedItem as String
-            updateSelectedDevice(selectedDeviceName)
-        }
-
-        root.findViewById<Button>(R.id.advertising_stop_btn).setOnClickListener {
-            appModel.stopAdvertising()
-        }
-
-        return root
     }
 
     private fun updateSelectedDevice(selectedDeviceName: String) {
         val selectedDevice: Device? = AppModel.supportedDevices.find { selectedDeviceName == it.name }
         selectedDevice?.let {
-            Log.d(TAG, "updateSelectedDevice: ${it.name} selected")
             appModel.selectDevice(selectedDevice)
         }
     }

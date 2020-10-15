@@ -1,20 +1,23 @@
 package nl.rwslinkman.simdeviceble
 
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
+
 
 class MainActivity : AppCompatActivity() {
 
-    private val requestEnableBT = 1337;
+    private lateinit var appModel: AppModel
+    private var bluetoothAdapter: BluetoothAdapter? = null
+    private var advManager: AdvertisementManager? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,21 +25,20 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
         val model: AppModel by viewModels()
+        appModel = model
 
-        val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         model.bluetoothSupported.postValue(bluetoothAdapter != null)
 
         bluetoothAdapter?.let {
-            model.bluetoothEnabled.postValue(bluetoothAdapter.isEnabled)
-            model.bluetoothAdvertisingSupported.postValue(bluetoothAdapter.isMultipleAdvertisementSupported)
-            model.advertisementName.postValue(bluetoothAdapter.name)
-            model.locationPermissionGranted.postValue( false)
+            model.bluetoothEnabled.postValue(it.isEnabled)
+            model.bluetoothAdvertisingSupported.postValue(it.isMultipleAdvertisementSupported)
+            model.advertisementName.postValue(it.name)
 
-            val advertisementManager = AdvertisementManager(bluetoothAdapter)
+            // inject
+            advManager = AdvertisementManager(this, it, model)
+            model.advertisementManager = advManager
         }
-
-        val bluetoothManager : BluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-
 
         val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
@@ -50,7 +52,32 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_ENABLE_BT) {
+            // Bluetooth on/off
+            val isEnabled = resultCode == RESULT_OK
+            appModel.bluetoothEnabled.postValue(isEnabled)
+
+            // Advertising supported
+            val canAdvertise = bluetoothAdapter?.isMultipleAdvertisementSupported
+            appModel.bluetoothAdvertisingSupported.postValue(canAdvertise)
+        }
+    }
+
+    override fun onPause() {
+        appModel.advertisementManager?.stop()
+        appModel.advertisementManager = null // it contains context, must not last too long
+        super.onPause()
+    }
+
+    fun startBluetoothIntent() {
+        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+    }
+
     companion object {
         const val TAG = "MainActivity"
+        const val REQUEST_ENABLE_BT = 1337;
     }
 }

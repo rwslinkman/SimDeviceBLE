@@ -11,19 +11,17 @@ class AppModel: ViewModel() {
     val bluetoothSupported: MutableLiveData<Boolean> = MutableLiveData(false)
     val bluetoothEnabled: MutableLiveData<Boolean> = MutableLiveData(false)
     val bluetoothAdvertisingSupported: MutableLiveData<Boolean> = MutableLiveData(false)
-    val locationPermissionGranted: MutableLiveData<Boolean> = MutableLiveData(false)
 
     val isAdvertising: MutableLiveData<Boolean> = MutableLiveData(false)
     val advertisementName: MutableLiveData<String> = MutableLiveData("Unknown")
     val activeDevice: MutableLiveData<Device> = MutableLiveData(supportedDevices.first())
     val isConnectable: MutableLiveData<Boolean> = MutableLiveData(true)
+    val advertiseDeviceName: MutableLiveData<Boolean> = MutableLiveData(true)
+
+    var advertisementManager: AdvertisementManager? = null
 
     fun enableBluetooth() {
-        // TODO
-    }
-
-    fun startPermissionFlow() {
-        // TODO
+        advertisementManager?.turnOnBluetooth()
     }
 
     fun selectDevice(device: Device) {
@@ -31,11 +29,14 @@ class AppModel: ViewModel() {
     }
 
     fun startAdvertising() {
-
+        activeDevice.value?.let {
+            val allowDeviceName: Boolean = if (advertiseDeviceName.value == null) true else advertiseDeviceName.value!!
+            advertisementManager?.advertise(it, allowDeviceName)
+        }
     }
 
     fun stopAdvertising() {
-        // TODO
+        advertisementManager?.stop()
     }
 
     companion object {
