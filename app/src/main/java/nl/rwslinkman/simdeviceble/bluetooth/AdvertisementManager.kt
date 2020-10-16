@@ -65,6 +65,7 @@ class AdvertisementManager(
                 TAG,
                 "onCharacteristicReadRequest: Device tried to read characteristic: " + characteristic?.uuid
             )
+            Log.i(TAG, "onCharacteristicReadRequest: current value ${characteristic?.value}")
             if (offset != 0) {
                 gattServer?.sendResponse(
                     device,
@@ -97,9 +98,11 @@ class AdvertisementManager(
             offset: Int,
             value: ByteArray?
         ) {
+            val status: Int = BluetoothGatt.GATT_SUCCESS
             // TODO: Find characteristic and validate Write request
             Log.i(TAG, "Characteristic Write request: ")
-            val status: Int = BluetoothGatt.GATT_SUCCESS
+            // TODO: set value to characteristic
+            characteristic?.value = value
             if (responseNeeded) {
                 gattServer?.sendResponse(device, requestId, status, 0, null)
             }
@@ -191,7 +194,7 @@ class AdvertisementManager(
         override fun onServiceAdded(status: Int, service: BluetoothGattService?) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 val nextItem = addServiceQueue.poll()
-                if(nextItem == null) {
+                if (nextItem == null) {
                     startAdvertisement()
                 } else {
                     gattServer?.addService(nextItem)
@@ -221,13 +224,13 @@ class AdvertisementManager(
             Log.e(TAG, "advertise: Unable to open GATT server")
             return
         }
-        
+
         advertiseCommand = command // Store for later
 
         val gattServices = createServices(command.device)
         addServiceQueue = LinkedList(gattServices)
-        
-        if(addServiceQueue.isEmpty()) {
+
+        if (addServiceQueue.isEmpty()) {
             startAdvertisement()
         } else {
             gattServer?.addService(addServiceQueue.poll())
@@ -254,20 +257,25 @@ class AdvertisementManager(
                     // Map to GATT Characteristic
                     var properties = 0
                     var permissions = 0
-                    if(it.isRead) {
+                    if (it.isRead) {
                         properties = properties.or(BluetoothGattCharacteristic.PROPERTY_READ)
                         permissions = permissions.or(BluetoothGattCharacteristic.PERMISSION_READ)
                     }
-                    if(it.isWrite) {
+                    if (it.isWrite) {
                         properties = properties.or(BluetoothGattCharacteristic.PROPERTY_WRITE)
-                        permissions = BluetoothGattCharacteristic.PERMISSION_WRITE
+                        permissions = permissions.or(BluetoothGattCharacteristic.PERMISSION_WRITE)
                     }
-                    if(it.isNotify) {
+                    if (it.isNotify) {
                         properties = properties.or(BluetoothGattCharacteristic.PROPERTY_NOTIFY)
                     }
-                    val gattCharacteristic = BluetoothGattCharacteristic(it.uuid, properties, permissions)
+                    if (it.isIndicate) {
+                        properties = properties.or(BluetoothGattCharacteristic.PROPERTY_INDICATE)
+                    }
 
-                    if (it.isNotify) {
+                    val gattCharacteristic =
+                        BluetoothGattCharacteristic(it.uuid, properties, permissions)
+
+                    if (it.isNotify || it.isIndicate) {
                         val cccDescriptor = createClientCharacteristicConfigurationDescriptor()
                         gattCharacteristic.addDescriptor(cccDescriptor)
                     }

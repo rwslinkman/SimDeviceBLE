@@ -1,4 +1,4 @@
-package nl.rwslinkman.simdeviceble.device.time
+package nl.rwslinkman.simdeviceble.device
 
 import nl.rwslinkman.simdeviceble.device.model.Device
 import nl.rwslinkman.simdeviceble.device.model.Service

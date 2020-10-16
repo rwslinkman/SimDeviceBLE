@@ -3,9 +3,10 @@ package nl.rwslinkman.simdeviceble
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import nl.rwslinkman.simdeviceble.bluetooth.BluetoothDelegate
-import nl.rwslinkman.simdeviceble.device.heartrate.HeartRatePeripheral
+import nl.rwslinkman.simdeviceble.device.HeartRatePeripheral
 import nl.rwslinkman.simdeviceble.device.model.Device
-import nl.rwslinkman.simdeviceble.device.time.Clock
+import nl.rwslinkman.simdeviceble.device.Clock
+import nl.rwslinkman.simdeviceble.device.EarThermometer
 
 class AppModel: ViewModel() {
 
@@ -59,7 +60,8 @@ class AppModel: ViewModel() {
     companion object {
         val supportedDevices: List<Device> = listOf(
             HeartRatePeripheral(),
-            Clock()
+            Clock(),
+            EarThermometer()
         )
         const val defaultAllowDeviceName: Boolean = true
         const val defaultIsConnectable: Boolean = true

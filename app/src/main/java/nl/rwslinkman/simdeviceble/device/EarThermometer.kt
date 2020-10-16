@@ -1,22 +1,22 @@
-package nl.rwslinkman.simdeviceble.device.heartrate
+package nl.rwslinkman.simdeviceble.device
 
 import nl.rwslinkman.simdeviceble.device.model.Device
 import nl.rwslinkman.simdeviceble.device.model.Service
 import nl.rwslinkman.simdeviceble.service.battery.BatteryService
-import nl.rwslinkman.simdeviceble.service.heartrate.HeartRateService
+import nl.rwslinkman.simdeviceble.service.healththermometer.HealthThermometerService
 import java.util.*
 
-class HeartRatePeripheral: Device() {
+class EarThermometer: Device() {
 
     override val name: String
-        get() = "Fitness Band (Chest)"
+        get() = "Thermometer (Ear)"
 
     override val primaryServiceUuid: UUID
-        get() = HeartRateService.SERVICE_UUID
+        get() = HealthThermometerService.SERVICE_UUID
 
     override val services: List<Service>
         get() = listOf(
-            HeartRateService(),
+            HealthThermometerService(),
             BatteryService()
         )
 }
