@@ -1,4 +1,4 @@
-package nl.rwslinkman.simdeviceble
+package nl.rwslinkman.simdeviceble.bluetooth
 
 import android.bluetooth.*
 import android.bluetooth.le.AdvertiseCallback
@@ -7,6 +7,8 @@ import android.bluetooth.le.AdvertiseSettings
 import android.content.Context
 import android.os.ParcelUuid
 import android.util.Log
+import nl.rwslinkman.simdeviceble.AppModel
+import nl.rwslinkman.simdeviceble.MainActivity
 import nl.rwslinkman.simdeviceble.device.model.Device
 
 
@@ -20,10 +22,10 @@ class AdvertisementManager(
     private val advertiser = bluetoothAdapter.bluetoothLeAdvertiser
     private var gattServer: BluetoothGattServer? = null
 
-    val gattCallback = object : BluetoothGattServerCallback() {
+    private val gattCallback = object : BluetoothGattServerCallback() {
         // TODO
     }
-    val scanCallback = object : AdvertiseCallback() {
+    private val scanCallback = object : AdvertiseCallback() {
         override fun onStartSuccess(settingsInEffect: AdvertiseSettings?) {
             super.onStartSuccess(settingsInEffect)
             Log.d(TAG, "onStartSuccess: ")
@@ -36,7 +38,11 @@ class AdvertisementManager(
         }
     }
 
-    fun advertise(device: Device, includeDeviceName: Boolean) {
+    fun advertise(
+        device: Device,
+        includeDeviceName: Boolean,
+        isConnectable: Boolean
+    ) {
         gattServer = bluetoothManager.openGattServer(context, gattCallback)
 
         // TODO: add service
@@ -44,7 +50,7 @@ class AdvertisementManager(
         val mAdvSettings = AdvertiseSettings.Builder()
             .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
             .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
-            .setConnectable(true)
+            .setConnectable(isConnectable)
             .build()
         val mAdvData = AdvertiseData.Builder()
             .setIncludeTxPowerLevel(true)
@@ -64,10 +70,6 @@ class AdvertisementManager(
         
         advertiser?.stopAdvertising(scanCallback)
         appModel.isAdvertising.postValue(false)
-    }
-
-    fun turnOnBluetooth() {
-        context.startBluetoothIntent()
     }
 
     companion object {

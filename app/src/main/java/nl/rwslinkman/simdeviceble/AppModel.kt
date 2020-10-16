@@ -2,6 +2,7 @@ package nl.rwslinkman.simdeviceble
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import nl.rwslinkman.simdeviceble.bluetooth.BluetoothDelegate
 import nl.rwslinkman.simdeviceble.device.heartrate.HeartRatePeripheral
 import nl.rwslinkman.simdeviceble.device.model.Device
 import nl.rwslinkman.simdeviceble.device.time.Clock
@@ -18,10 +19,10 @@ class AppModel: ViewModel() {
     val isConnectable: MutableLiveData<Boolean> = MutableLiveData(true)
     val advertiseDeviceName: MutableLiveData<Boolean> = MutableLiveData(true)
 
-    var advertisementManager: AdvertisementManager? = null
+    val bluetoothDelegate: MutableLiveData<BluetoothDelegate> = MutableLiveData()
 
     fun enableBluetooth() {
-        advertisementManager?.turnOnBluetooth()
+        bluetoothDelegate.value?.turnOnBluetooth()
     }
 
     fun selectDevice(device: Device) {
@@ -30,13 +31,14 @@ class AppModel: ViewModel() {
 
     fun startAdvertising() {
         activeDevice.value?.let {
-            val allowDeviceName: Boolean = if (advertiseDeviceName.value == null) true else advertiseDeviceName.value!!
-            advertisementManager?.advertise(it, allowDeviceName)
+            val allowDeviceName: Boolean = if (advertiseDeviceName.value == null) defaultAllowDeviceName else advertiseDeviceName.value!!
+            val isConnectable: Boolean = if (isConnectable.value == null) defaultIsConnectable else isConnectable.value!!
+            bluetoothDelegate.value?.advertise(it, allowDeviceName, isConnectable)
         }
     }
 
     fun stopAdvertising() {
-        advertisementManager?.stop()
+        bluetoothDelegate.value?.stopAdvertising()
     }
 
     companion object {
@@ -44,5 +46,7 @@ class AppModel: ViewModel() {
             HeartRatePeripheral(),
             Clock()
         )
+        const val defaultAllowDeviceName: Boolean = true
+        const val defaultIsConnectable: Boolean = true
     }
 }
