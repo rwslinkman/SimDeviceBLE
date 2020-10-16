@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Connections"
+        android:textSize="20sp" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="3">
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/ble_status_supported_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:gravity="start"
+                android:text="Active connections"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/ble_status_supported_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="3"
+                android:gravity="center|end"
+                android:text="0"
+                android:textSize="12sp" />
+
+        </TableRow>
+
+    </TableLayout>
+
+</LinearLayout>

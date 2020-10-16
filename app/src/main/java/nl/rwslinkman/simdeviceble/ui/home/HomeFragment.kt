@@ -63,7 +63,6 @@ class HomeFragment : Fragment() {
             enableBluetoothBtn.isEnabled = !it
         })
 
-
         enableBluetoothBtn.setOnClickListener {
             appModel.enableBluetooth()
         }
@@ -72,6 +71,7 @@ class HomeFragment : Fragment() {
         val advertisingEnabledView: TextView = root.findViewById(R.id.advertising_enabled_value)
         val advertisementNameView: TextView = root.findViewById(R.id.advertising_name_value)
         val connectableSwitch: SwitchCompat = root.findViewById(R.id.advertising_connectable_value)
+        val advertiseDeviceNameSwitch: SwitchCompat = root.findViewById(R.id.advertising_allowname_value)
         val advertiseStartBtn = root.findViewById<Button>(R.id.advertising_start_btn)
         val advertiseStopBtn = root.findViewById<Button>(R.id.advertising_stop_btn)
 
@@ -91,9 +91,15 @@ class HomeFragment : Fragment() {
         appModel.isConnectable.observe(this, Observer {
             connectableSwitch.isChecked = it
         })
-
         connectableSwitch.setOnCheckedChangeListener { _, isChecked ->
             appModel.isConnectable.postValue(isChecked)
+        }
+
+        appModel.advertiseDeviceName.observe(this, Observer {
+            advertiseDeviceNameSwitch.isChecked = it
+        })
+        advertiseDeviceNameSwitch.setOnCheckedChangeListener { _, isChecked ->
+            appModel.advertiseDeviceName.postValue(isChecked)
         }
 
         advertiseStartBtn.setOnClickListener {
@@ -110,7 +116,7 @@ class HomeFragment : Fragment() {
     private fun setupDeviceSelector(deviceSelector: Spinner) {
         val adapter = ArrayAdapter(
             activity as Context,
-            android.R.layout.simple_spinner_item,
+            R.layout.spinner_item_device,
             AppModel.supportedDevices.map { it.name })
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         deviceSelector.adapter = adapter
