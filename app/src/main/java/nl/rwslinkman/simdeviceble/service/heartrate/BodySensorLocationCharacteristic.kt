@@ -1,5 +1,6 @@
 package nl.rwslinkman.simdeviceble.service.heartrate
 
+import android.bluetooth.BluetoothGatt
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import java.util.*
 
@@ -14,7 +15,8 @@ class BodySensorLocationCharacteristic: Characteristic {
         get() = true
 
     override fun validateWrite(): Int {
-        TODO("Not yet implemented")
+        // TODO
+        return BluetoothGatt.GATT_SUCCESS
     }
 
     companion object {

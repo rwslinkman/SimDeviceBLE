@@ -1,10 +1,8 @@
 package nl.rwslinkman.simdeviceble.service.heartrate
 
-import android.bluetooth.BluetoothGattCharacteristic
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Service
 import java.util.*
-
 
 /**
  * See [
@@ -16,12 +14,8 @@ class HeartRateService: Service {
     private val MAX_UINT16 = Math.pow(2.0, 16.0).toInt() - 1
 
 
-
-    private val LOCATION_OTHER = 0
-
-
     override val uuid: UUID
-        get() = UUID.fromString("0000180D-0000-1000-8000-00805f9b34fb")
+        get() = SERVICE_UUID
 
     override val characteristics: List<Characteristic>
         get() = listOf(
@@ -29,4 +23,8 @@ class HeartRateService: Service {
             BodySensorLocationCharacteristic(),
             HeartRateControlPointCharacteristic()
         )
+
+    companion object {
+        val SERVICE_UUID = UUID.fromString("0000180D-0000-1000-8000-00805f9b34fb")
+    }
 }

@@ -10,10 +10,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import nl.rwslinkman.simdeviceble.bluetooth.AdvertiseCommand
 import nl.rwslinkman.simdeviceble.bluetooth.AdvertisementManager
 import nl.rwslinkman.simdeviceble.bluetooth.BluetoothDelegate
 import nl.rwslinkman.simdeviceble.device.model.Device
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,7 +28,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun advertise(device: Device, includeDeviceName: Boolean, isConnectable: Boolean) {
-            advManager?.advertise(device, includeDeviceName, isConnectable)
+            val command = AdvertiseCommand(device, includeDeviceName, isConnectable)
+            advManager?.advertise(command)
         }
 
         override fun stopAdvertising() {
@@ -101,7 +102,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val TAG = "MainActivity"
-        const val REQUEST_ENABLE_BT = 1337;
+//        const val TAG = "MainActivity"
+        const val REQUEST_ENABLE_BT = 1337
     }
 }

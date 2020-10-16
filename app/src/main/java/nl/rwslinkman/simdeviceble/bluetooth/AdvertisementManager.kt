@@ -12,7 +12,6 @@ import nl.rwslinkman.simdeviceble.MainActivity
 import nl.rwslinkman.simdeviceble.device.model.Device
 import java.util.*
 
-
 class AdvertisementManager(
     private val context: MainActivity,
     bluetoothAdapter: BluetoothAdapter,
@@ -34,8 +33,7 @@ class AdvertisementManager(
                             TAG,
                             "onConnectionStateChange: connected to ${device.name} [${device.address}]"
                         )
-                        val connectedDevice = ConnectedDevice(device.name, device.address)
-                        appModel.onDeviceConnected(connectedDevice)
+                        appModel.onDeviceConnected(device.address)
                     }
                 } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
                     device?.let {
@@ -43,8 +41,7 @@ class AdvertisementManager(
                             TAG,
                             "onConnectionStateChange: disconnected from ${device.name} [${device.address}]"
                         )
-                        val connectedDevice = ConnectedDevice(device.name, device.address)
-                        appModel.onDeviceDisconnected(connectedDevice)
+                        appModel.onDeviceDisconnected(device.address)
                     }
                 }
             } else {
@@ -53,8 +50,7 @@ class AdvertisementManager(
                         TAG,
                         "onConnectionStateChange: Connect error while connecting ${device.name} [${device.address}]"
                     )
-                    val connectedDevice = ConnectedDevice(device.name, device.address)
-                    appModel.onDeviceDisconnected(connectedDevice)
+                    appModel.onDeviceDisconnected(device.address)
                 }
             }
         }
@@ -76,7 +72,7 @@ class AdvertisementManager(
                     BluetoothGatt.GATT_INVALID_OFFSET,
                     offset,
                     null
-                );
+                )
                 return
             }
             gattServer?.sendResponse(
@@ -105,11 +101,7 @@ class AdvertisementManager(
             Log.i(TAG, "Characteristic Write request: ")
             val status: Int = BluetoothGatt.GATT_SUCCESS
             if (responseNeeded) {
-                gattServer?.sendResponse(
-                    device, requestId, status,  /* No need to respond with an offset */
-                    0,  /* No need to respond with a value */
-                    null
-                )
+                gattServer?.sendResponse(device, requestId, status, 0, null)
             }
         }
 
@@ -195,6 +187,17 @@ class AdvertisementManager(
                 gattServer?.sendResponse(device, requestId, status, 0, null)
             }
         }
+
+        override fun onServiceAdded(status: Int, service: BluetoothGattService?) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                val nextItem = addServiceQueue.poll()
+                if(nextItem == null) {
+                    startAdvertisement()
+                } else {
+                    gattServer?.addService(nextItem)
+                }
+            }
+        }
     }
     private val scanCallback = object : AdvertiseCallback() {
         override fun onStartSuccess(settingsInEffect: AdvertiseSettings?) {
@@ -209,38 +212,26 @@ class AdvertisementManager(
         }
     }
 
-    fun advertise(
-        device: Device,
-        includeDeviceName: Boolean,
-        isConnectable: Boolean
-    ) {
+    private lateinit var addServiceQueue: Queue<BluetoothGattService>
+    private lateinit var advertiseCommand: AdvertiseCommand
+
+    fun advertise(command: AdvertiseCommand) {
         gattServer = bluetoothManager.openGattServer(context, gattCallback)
         if (gattServer == null) {
             Log.e(TAG, "advertise: Unable to open GATT server")
             return
         }
+        
+        advertiseCommand = command // Store for later
 
-        advertisedDevice = device
-
-        val gattServices: List<BluetoothGattService> = createServices(device)
-        gattServices.forEach {
-            gattServer?.addService(it)
+        val gattServices = createServices(command.device)
+        addServiceQueue = LinkedList(gattServices)
+        
+        if(addServiceQueue.isEmpty()) {
+            startAdvertisement()
+        } else {
+            gattServer?.addService(addServiceQueue.poll())
         }
-
-        val mAdvSettings = AdvertiseSettings.Builder()
-            .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
-            .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
-            .setConnectable(isConnectable)
-            .build()
-        val mAdvData = AdvertiseData.Builder()
-            .setIncludeTxPowerLevel(true)
-            .addServiceUuid(ParcelUuid(device.primaryServiceUuid))
-            .build()
-
-        val mAdvScanResponse = AdvertiseData.Builder()
-            .setIncludeDeviceName(includeDeviceName)
-            .build()
-        advertiser.startAdvertising(mAdvSettings, mAdvData, mAdvScanResponse, scanCallback)
     }
 
     fun stop() {
@@ -255,12 +246,26 @@ class AdvertisementManager(
 
     private fun createServices(device: Device): List<BluetoothGattService> {
         return device.services.map { service ->
-            val gattService = BluetoothGattService(service.uuid, BluetoothGattService.SERVICE_TYPE_PRIMARY)
+            val gattService =
+                BluetoothGattService(service.uuid, BluetoothGattService.SERVICE_TYPE_PRIMARY)
 
             service.characteristics
                 .map {
                     // Map to GATT Characteristic
-                    val gattCharacteristic = BluetoothGattCharacteristic(it.uuid, 0, 0)
+                    var properties = 0
+                    var permissions = 0
+                    if(it.isRead) {
+                        properties = properties.or(BluetoothGattCharacteristic.PROPERTY_READ)
+                        permissions = permissions.or(BluetoothGattCharacteristic.PERMISSION_READ)
+                    }
+                    if(it.isWrite) {
+                        properties = properties.or(BluetoothGattCharacteristic.PROPERTY_WRITE)
+                        permissions = BluetoothGattCharacteristic.PERMISSION_WRITE
+                    }
+                    if(it.isNotify) {
+                        properties = properties.or(BluetoothGattCharacteristic.PROPERTY_NOTIFY)
+                    }
+                    val gattCharacteristic = BluetoothGattCharacteristic(it.uuid, properties, permissions)
 
                     if (it.isNotify) {
                         val cccDescriptor = createClientCharacteristicConfigurationDescriptor()
@@ -284,9 +289,26 @@ class AdvertisementManager(
         return descriptor
     }
 
+    private fun startAdvertisement() {
+        val mAdvSettings = AdvertiseSettings.Builder()
+            .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
+            .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
+            .setConnectable(advertiseCommand.isConnectable)
+            .build()
+        val mAdvData = AdvertiseData.Builder()
+            .setIncludeTxPowerLevel(true)
+            .addServiceUuid(ParcelUuid(advertiseCommand.device.primaryServiceUuid))
+            .build()
+
+        val mAdvScanResponse = AdvertiseData.Builder()
+            .setIncludeDeviceName(advertiseCommand.includeDeviceName)
+            .build()
+        advertiser.startAdvertising(mAdvSettings, mAdvData, mAdvScanResponse, scanCallback)
+    }
+
     companion object {
         const val TAG = "AdvertisementManager"
         private val CLIENT_CHARACTERISTIC_CONFIGURATION_UUID =
-            UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
+            UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
     }
 }

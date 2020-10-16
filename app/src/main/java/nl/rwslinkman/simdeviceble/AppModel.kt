@@ -3,26 +3,27 @@ package nl.rwslinkman.simdeviceble
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import nl.rwslinkman.simdeviceble.bluetooth.BluetoothDelegate
-import nl.rwslinkman.simdeviceble.bluetooth.ConnectedDevice
 import nl.rwslinkman.simdeviceble.device.heartrate.HeartRatePeripheral
 import nl.rwslinkman.simdeviceble.device.model.Device
 import nl.rwslinkman.simdeviceble.device.time.Clock
 
 class AppModel: ViewModel() {
 
+    // Data for Bluetooth UI
     val bluetoothSupported: MutableLiveData<Boolean> = MutableLiveData(false)
     val bluetoothEnabled: MutableLiveData<Boolean> = MutableLiveData(false)
     val bluetoothAdvertisingSupported: MutableLiveData<Boolean> = MutableLiveData(false)
-
+    // Data for Advertising UI
     val isAdvertising: MutableLiveData<Boolean> = MutableLiveData(false)
     val advertisementName: MutableLiveData<String> = MutableLiveData("Unknown")
     val activeDevice: MutableLiveData<Device> = MutableLiveData(supportedDevices.first())
     val isConnectable: MutableLiveData<Boolean> = MutableLiveData(true)
     val advertiseDeviceName: MutableLiveData<Boolean> = MutableLiveData(true)
+    // Data for Connections UI
+    private val _connDevices: MutableSet<String> = mutableSetOf()
+    val connectedDevices: MutableLiveData<List<String>> = MutableLiveData()
 
-    private val _connDevices: MutableMap<String, ConnectedDevice> = mutableMapOf()
-    val connectedDevices: MutableLiveData<List<ConnectedDevice>> = MutableLiveData()
-
+    // Handle to Activity for BLE related operations
     val bluetoothDelegate: MutableLiveData<BluetoothDelegate> = MutableLiveData()
 
     fun enableBluetooth() {
@@ -45,14 +46,14 @@ class AppModel: ViewModel() {
         bluetoothDelegate.value?.stopAdvertising()
     }
 
-    fun onDeviceConnected(device: ConnectedDevice) {
-        _connDevices[device.address] = device
-        connectedDevices.postValue(_connDevices.values.toList())
+    fun onDeviceConnected(device: String) {
+        _connDevices.add(device)
+        connectedDevices.postValue(_connDevices.toList())
     }
 
-    fun onDeviceDisconnected(device: ConnectedDevice) {
-        _connDevices.remove(device.address)
-        connectedDevices.postValue(_connDevices.values.toList())
+    fun onDeviceDisconnected(device: String) {
+        _connDevices.remove(device)
+        connectedDevices.postValue(_connDevices.toList())
     }
 
     companion object {

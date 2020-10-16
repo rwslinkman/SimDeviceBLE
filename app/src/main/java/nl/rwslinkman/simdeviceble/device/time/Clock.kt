@@ -2,7 +2,7 @@ package nl.rwslinkman.simdeviceble.device.time
 
 import nl.rwslinkman.simdeviceble.device.model.Device
 import nl.rwslinkman.simdeviceble.device.model.Service
-import nl.rwslinkman.simdeviceble.service.BatteryService
+import nl.rwslinkman.simdeviceble.service.battery.BatteryService
 import nl.rwslinkman.simdeviceble.service.CurrentTimeService
 import java.util.*
 
