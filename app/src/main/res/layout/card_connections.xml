@@ -20,7 +20,7 @@
         <TableRow>
 
             <TextView
-                android:id="@+id/ble_status_supported_label"
+                android:id="@+id/connections_current_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="2"
@@ -29,7 +29,7 @@
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/ble_status_supported_value"
+                android:id="@+id/connections_current_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="3"

@@ -6,7 +6,7 @@ import nl.rwslinkman.simdeviceble.service.BatteryService
 import nl.rwslinkman.simdeviceble.service.CurrentTimeService
 import java.util.*
 
-class Clock: Device {
+class Clock: Device() {
     override val name: String
         get() = "Digital clock"
     override val primaryServiceUuid: UUID

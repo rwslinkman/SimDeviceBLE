@@ -3,10 +3,10 @@ package nl.rwslinkman.simdeviceble.device.heartrate
 import nl.rwslinkman.simdeviceble.device.model.Device
 import nl.rwslinkman.simdeviceble.device.model.Service
 import nl.rwslinkman.simdeviceble.service.BatteryService
-import nl.rwslinkman.simdeviceble.service.HeartRateService
+import nl.rwslinkman.simdeviceble.service.heartrate.HeartRateService
 import java.util.*
 
-class HeartRatePeripheral: Device {
+class HeartRatePeripheral: Device() {
 //
 //    mHeartRateMeasurementCharacteristic =
 //    new BluetoothGattCharacteristic(HEART_RATE_MEASUREMENT_UUID,

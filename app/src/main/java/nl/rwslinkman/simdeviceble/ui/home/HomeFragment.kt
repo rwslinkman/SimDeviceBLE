@@ -40,9 +40,9 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         val root = inflater.inflate(R.layout.fragment_home, container, false)
 
+        //region Bluetooth
         val bleSupportedTextView: TextView = root.findViewById(R.id.ble_status_supported_value)
         val bleEnabledTextView: TextView = root.findViewById(R.id.ble_status_enabled_value)
         val bleAdvertisingSupportedTextView: TextView =
@@ -55,7 +55,6 @@ class HomeFragment : Fragment() {
 
         appModel.bluetoothEnabled.observe(this, Observer {
             bleEnabledTextView.text = if (it) "Yes" else "No"
-
         })
 
         appModel.bluetoothAdvertisingSupported.observe(this, Observer {
@@ -66,10 +65,12 @@ class HomeFragment : Fragment() {
         enableBluetoothBtn.setOnClickListener {
             appModel.enableBluetooth()
         }
+        //endregion
 
-        // Advertising
+        // region Advertising
         val advertisingEnabledView: TextView = root.findViewById(R.id.advertising_enabled_value)
         val advertisementNameView: TextView = root.findViewById(R.id.advertising_name_value)
+        val deviceSelector: Spinner = root.findViewById(R.id.advertising_device_value)
         val connectableSwitch: SwitchCompat = root.findViewById(R.id.advertising_connectable_value)
         val advertiseDeviceNameSwitch: SwitchCompat = root.findViewById(R.id.advertising_allowname_value)
         val advertiseStartBtn = root.findViewById<Button>(R.id.advertising_start_btn)
@@ -77,6 +78,10 @@ class HomeFragment : Fragment() {
 
         appModel.isAdvertising.observe(this, Observer {
             advertisingEnabledView.text = if (it) "Yes" else "No"
+            // disable control while advertising
+            deviceSelector.isEnabled = !it
+            connectableSwitch.isEnabled = !it
+            advertiseDeviceNameSwitch.isEnabled = !it
             advertiseStartBtn.isEnabled = !it
             advertiseStopBtn.isEnabled = it
         })
@@ -85,7 +90,7 @@ class HomeFragment : Fragment() {
             advertisementNameView.text = it
         })
 
-        val deviceSelector: Spinner = root.findViewById(R.id.advertising_device_value)
+
         setupDeviceSelector(deviceSelector)
 
         appModel.isConnectable.observe(this, Observer {
@@ -109,6 +114,15 @@ class HomeFragment : Fragment() {
         advertiseStopBtn.setOnClickListener {
             appModel.stopAdvertising()
         }
+        //endregion
+
+        //region Connections
+        val currentConnectionCountView: TextView = root.findViewById(R.id.connections_current_value)
+
+        appModel.connectedDevices.observe(this, Observer {
+            currentConnectionCountView.text = it.size.toString()
+        })
+        //endregion
 
         return root
     }

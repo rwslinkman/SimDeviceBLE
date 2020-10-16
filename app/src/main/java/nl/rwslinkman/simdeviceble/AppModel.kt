@@ -3,6 +3,7 @@ package nl.rwslinkman.simdeviceble
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import nl.rwslinkman.simdeviceble.bluetooth.BluetoothDelegate
+import nl.rwslinkman.simdeviceble.bluetooth.ConnectedDevice
 import nl.rwslinkman.simdeviceble.device.heartrate.HeartRatePeripheral
 import nl.rwslinkman.simdeviceble.device.model.Device
 import nl.rwslinkman.simdeviceble.device.time.Clock
@@ -18,6 +19,9 @@ class AppModel: ViewModel() {
     val activeDevice: MutableLiveData<Device> = MutableLiveData(supportedDevices.first())
     val isConnectable: MutableLiveData<Boolean> = MutableLiveData(true)
     val advertiseDeviceName: MutableLiveData<Boolean> = MutableLiveData(true)
+
+    private val _connDevices: MutableMap<String, ConnectedDevice> = mutableMapOf()
+    val connectedDevices: MutableLiveData<List<ConnectedDevice>> = MutableLiveData()
 
     val bluetoothDelegate: MutableLiveData<BluetoothDelegate> = MutableLiveData()
 
@@ -39,6 +43,16 @@ class AppModel: ViewModel() {
 
     fun stopAdvertising() {
         bluetoothDelegate.value?.stopAdvertising()
+    }
+
+    fun onDeviceConnected(device: ConnectedDevice) {
+        _connDevices[device.address] = device
+        connectedDevices.postValue(_connDevices.values.toList())
+    }
+
+    fun onDeviceDisconnected(device: ConnectedDevice) {
+        _connDevices.remove(device.address)
+        connectedDevices.postValue(_connDevices.values.toList())
     }
 
     companion object {
