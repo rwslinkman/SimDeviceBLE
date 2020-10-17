@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import nl.rwslinkman.simdeviceble.R
 import nl.rwslinkman.simdeviceble.device.model.Device
-import nl.rwslinkman.simdeviceble.ui.data.ServiceDataAdapter
 
 class SupportedDevicesAdapter(private val dataSet: List<Device>): RecyclerView.Adapter<SupportedDevicesAdapter.ViewHolder>() {
 
@@ -17,11 +16,17 @@ class SupportedDevicesAdapter(private val dataSet: List<Device>): RecyclerView.A
         val servicesView: LinearLayout = itemView.findViewById(R.id.item_device_services)
     }
 
-    class ServiceViewHolder(inflater: LayoutInflater) {
+    private class ServiceViewHolder(inflater: LayoutInflater) {
         val itemView: View = inflater.inflate(R.layout.list_item_servicedata, null)
         val nameView: TextView = itemView.findViewById(R.id.item_service_name)
         val uuidView: TextView = itemView.findViewById(R.id.item_service_uuid)
         val characteristicsBlock: LinearLayout = itemView.findViewById(R.id.item_service_characteristics)
+    }
+
+    private class CharacteristicViewHolder(inflater: LayoutInflater) {
+        val itemView: View = inflater.inflate(R.layout.list_item_supported_characteristic, null)
+        val nameView: TextView = itemView.findViewById(R.id.item_characteristic_name)
+        val uuidView: TextView = itemView.findViewById(R.id.item_characteristic_uuid)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -47,7 +52,7 @@ class SupportedDevicesAdapter(private val dataSet: List<Device>): RecyclerView.A
             serviceViewHolder.uuidView.text = serviceItem.uuid.toString()
 
             serviceItem.characteristics.forEach {
-                val charViewHolder = ServiceDataAdapter.CharacteristicViewHolder(inflater)
+                val charViewHolder = CharacteristicViewHolder(inflater)
 
                 charViewHolder.nameView.text = it.name
                 charViewHolder.uuidView.text = it.uuid.toString()

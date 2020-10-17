@@ -24,38 +24,11 @@
         android:text="CharUUID"
         android:textSize="12sp" />
 
-    <LinearLayout
-        android:id="@+id/item_characteristic_value_block"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/item_characteristic_uuid"
-        android:orientation="horizontal"
-        android:weightSum="2">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Current value:"
-            android:textSize="12sp"
-            />
-
-        <TextView
-            android:id="@+id/item_characteristic_value"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="-"
-            android:textSize="12sp"
-            />
-
-    </LinearLayout>
-
     <RelativeLayout
         android:id="@+id/item_characteristic_updates_block"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/item_characteristic_value_block"
+        android:layout_below="@id/item_characteristic_uuid"
         android:orientation="horizontal"
         />
 
