@@ -15,7 +15,7 @@
         android:id="@+id/navigation_supported_devices"
         android:name="nl.rwslinkman.simdeviceble.ui.devices.SupportedDevicesFragment"
         android:label="@string/title_supported_devices"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_supported_devices" />
 
     <fragment
         android:id="@+id/navigation_servicedata"
