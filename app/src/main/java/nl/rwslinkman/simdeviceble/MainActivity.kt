@@ -75,8 +75,8 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_home,
-                R.id.navigation_dashboard,
-                R.id.navigation_notifications
+                R.id.navigation_supported_devices,
+                R.id.navigation_servicedata
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -102,7 +102,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-//        const val TAG = "MainActivity"
         const val REQUEST_ENABLE_BT = 1337
     }
 }

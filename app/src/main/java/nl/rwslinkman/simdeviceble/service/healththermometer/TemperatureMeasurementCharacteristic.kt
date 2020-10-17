@@ -15,7 +15,10 @@ class TemperatureMeasurementCharacteristic : Characteristic {
     override val isIndicate: Boolean
         get() = true
 
-    override fun validateWrite(): Int {
+    override val description: String?
+        get() = TEMPERATURE_MEASUREMENT_DESCRIPTION
+
+    override fun validateWrite(offset: Int, value: ByteArray?): Int {
         // TODO
         return BluetoothGatt.GATT_SUCCESS
     }
@@ -27,8 +30,7 @@ class TemperatureMeasurementCharacteristic : Characteristic {
         private val EXPONENT_SHIFT = 23
         private val MANTISSA_MASK = 0x007fffff
         private val MANTISSA_SHIFT = 0
-        private val TEMPERATURE_MEASUREMENT_DESCRIPTION =
-            "This characteristic is used " +
+        private val TEMPERATURE_MEASUREMENT_DESCRIPTION = "This characteristic is used " +
                     "to send a temperature measurement."
     }
 }

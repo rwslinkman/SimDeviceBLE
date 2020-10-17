@@ -5,21 +5,8 @@ import nl.rwslinkman.simdeviceble.device.model.Service
 import java.util.*
 
 class BatteryService: Service {
-
-//    mBatteryLevelCharacteristic =
-//    new BluetoothGattCharacteristic(BATTERY_LEVEL_UUID,
-//    BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_NOTIFY,
-//    BluetoothGattCharacteristic.PERMISSION_READ);
-//
-//    mBatteryLevelCharacteristic.addDescriptor(
-//    Peripheral.getClientCharacteristicConfigurationDescriptor());
-//
-//    mBatteryLevelCharacteristic.addDescriptor(
-//    Peripheral.getCharacteristicUserDescriptionDescriptor(BATTERY_LEVEL_DESCRIPTION));
-//
-//    mBatteryService = new BluetoothGattService(BATTERY_SERVICE_UUID,
-//    BluetoothGattService.SERVICE_TYPE_PRIMARY);
-//    mBatteryService.addCharacteristic(mBatteryLevelCharacteristic);
+    override val name: String
+        get() = "BatteryService"
 
     override val uuid: UUID
         get() = SERVICE_UUID

@@ -9,7 +9,7 @@ abstract class Device {
     abstract val primaryServiceUuid: UUID
     abstract val services: List<Service>
 
-    fun getCharacteristic(uuid: UUID?): Characteristic {
+    fun getCharacteristic(uuid: UUID?): Characteristic? {
         val result = services.flatMap {
             it.characteristics
         }

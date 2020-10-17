@@ -12,14 +12,14 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_supported_devices"
         android:name="nl.rwslinkman.simdeviceble.ui.devices.SupportedDevicesFragment"
-        android:label="@string/title_dashboard"
+        android:label="@string/title_supported_devices"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/navigation_servicedata"
         android:name="nl.rwslinkman.simdeviceble.ui.data.ServiceDataFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:label="@string/title_servicedata"
+        tools:layout="@layout/fragment_servicedata" />
 </navigation>

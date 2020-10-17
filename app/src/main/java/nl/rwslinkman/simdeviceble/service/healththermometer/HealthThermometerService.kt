@@ -24,6 +24,9 @@ import java.util.*
  * - Read/Write to get/set the description of the Characteristic.
  */
 class HealthThermometerService: Service {
+    override val name: String
+        get() = "HealthThermometerService"
+
     override val uuid: UUID
         get() = SERVICE_UUID
 
@@ -34,6 +37,6 @@ class HealthThermometerService: Service {
         )
 
     companion object {
-        val SERVICE_UUID = UUID.fromString("00001809-0000-1000-8000-00805f9b34fb")
+        val SERVICE_UUID: UUID = UUID.fromString("00001809-0000-1000-8000-00805f9b34fb")
     }
 }

@@ -14,7 +14,7 @@ class BodySensorLocationCharacteristic: Characteristic {
     override val isRead: Boolean
         get() = true
 
-    override fun validateWrite(): Int {
+    override fun validateWrite(offset: Int, value: ByteArray?): Int {
         // TODO
         return BluetoothGatt.GATT_SUCCESS
     }

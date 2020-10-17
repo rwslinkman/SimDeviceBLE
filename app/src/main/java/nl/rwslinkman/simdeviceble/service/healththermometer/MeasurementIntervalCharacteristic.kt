@@ -3,6 +3,8 @@ package nl.rwslinkman.simdeviceble.service.healththermometer
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.util.*
 
 /**
@@ -22,9 +24,32 @@ class MeasurementIntervalCharacteristic: Characteristic {
     override val isIndicate: Boolean
         get() = true
 
-    override fun validateWrite(): Int {
-        // TODO
-        return BluetoothGatt.GATT_SUCCESS
+    override val description: String?
+        get() = MEASUREMENT_INTERVAL_DESCRIPTION
+
+    override fun validateWrite(offset: Int, value: ByteArray?): Int {
+        if (offset != 0) {
+            return BluetoothGatt.GATT_INVALID_OFFSET
+        }
+
+        value?.let {
+            if(it.size != 2) {
+                return BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH
+            }
+            // Parse byte to numeric value
+            val byteBuffer: ByteBuffer = ByteBuffer.wrap(value)
+            byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
+            val newMeasurementIntervalValue: Short = byteBuffer.short
+
+            // Check value limits and return
+            return if (!isValueWithinLimits(newMeasurementIntervalValue)) {
+                BluetoothGatt.GATT_FAILURE
+            } else BluetoothGatt.GATT_SUCCESS
+        } ?: return BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH
+    }
+
+    private fun isValueWithinLimits(value: Short): Boolean {
+        return (value >= MIN_MEASUREMENT_INTERVAL) && (value <= MAX_MEASUREMENT_INTERVAL);
     }
 
     companion object {

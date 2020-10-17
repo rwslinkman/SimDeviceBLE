@@ -7,13 +7,13 @@
         android:title="@string/title_home" />
 
     <item
-        android:id="@+id/navigation_notifications"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/title_notifications" />
+        android:id="@+id/navigation_servicedata"
+        android:icon="@drawable/ic_bluetooth_black_24dp"
+        android:title="@string/title_servicedata" />
 
     <item
-        android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/title_dashboard" />
+        android:id="@+id/navigation_supported_devices"
+        android:icon="@drawable/ic_devices_supported_black_24dp"
+        android:title="@string/title_supported_devices" />
 
 </menu>
