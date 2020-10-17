@@ -11,6 +11,8 @@ import java.util.*
  * See [Measurement Interval](https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.measurement_interval.xml)
  */
 class MeasurementIntervalCharacteristic: Characteristic {
+    override val name: String
+        get() = "MeasurementInterval"
 
     override val uuid: UUID
         get() = UUID.fromString("00002A21-0000-1000-8000-00805f9b34fb")

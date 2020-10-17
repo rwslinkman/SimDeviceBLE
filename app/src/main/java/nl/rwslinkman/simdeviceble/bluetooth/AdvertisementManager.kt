@@ -268,6 +268,8 @@ class AdvertisementManager(
                         gattCharacteristic.addDescriptor(descriptor)
                     }
 
+                    // TODO: Set initial value on Characteristic
+
                     gattCharacteristic
                 }
                 .forEach {

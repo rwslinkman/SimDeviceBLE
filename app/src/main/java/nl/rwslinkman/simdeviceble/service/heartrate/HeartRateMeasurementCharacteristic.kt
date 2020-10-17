@@ -9,6 +9,8 @@ import java.util.*
  * See [Heart Rate Measurement](https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml)
  */
 class HeartRateMeasurementCharacteristic: Characteristic {
+    override val name: String
+        get() = "HeartRateMeasurement"
 
     override val uuid: UUID
         get() = CHAR_UUID

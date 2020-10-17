@@ -31,5 +31,14 @@
             android:text="UUID"
             android:textSize="12sp" />
 
+        <LinearLayout
+            android:id="@+id/item_service_characteristics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/item_service_uuid"
+            android:orientation="vertical"
+            android:layout_marginStart="8dp"
+            />
+
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

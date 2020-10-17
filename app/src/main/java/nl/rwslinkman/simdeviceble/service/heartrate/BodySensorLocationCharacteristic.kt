@@ -8,6 +8,9 @@ import java.util.*
  * See [Body Sensor Location](https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.body_sensor_location.xml)
  */
 class BodySensorLocationCharacteristic: Characteristic {
+    override val name: String
+        get() = "BodySensorLocation"
+
     override val uuid: UUID
         get() = CHAR_UUID
 

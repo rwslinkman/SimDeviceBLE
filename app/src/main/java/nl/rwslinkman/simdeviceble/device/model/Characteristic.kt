@@ -3,6 +3,7 @@ package nl.rwslinkman.simdeviceble.device.model
 import java.util.*
 
 interface Characteristic {
+    val name: String
     val uuid: UUID
 
     val isRead: Boolean

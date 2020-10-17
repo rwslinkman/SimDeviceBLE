@@ -3,15 +3,25 @@ package nl.rwslinkman.simdeviceble.ui.devices
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import nl.rwslinkman.simdeviceble.R
 import nl.rwslinkman.simdeviceble.device.model.Device
+import nl.rwslinkman.simdeviceble.ui.data.ServiceDataAdapter
 
 class SupportedDevicesAdapter(private val dataSet: List<Device>): RecyclerView.Adapter<SupportedDevicesAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val nameView: TextView = itemView.findViewById(R.id.item_device_name)
+        val servicesView: LinearLayout = itemView.findViewById(R.id.item_device_services)
+    }
+
+    class ServiceViewHolder(inflater: LayoutInflater) {
+        val itemView: View = inflater.inflate(R.layout.list_item_servicedata, null)
+        val nameView: TextView = itemView.findViewById(R.id.item_service_name)
+        val uuidView: TextView = itemView.findViewById(R.id.item_service_uuid)
+        val characteristicsBlock: LinearLayout = itemView.findViewById(R.id.item_service_characteristics)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,7 +37,25 @@ class SupportedDevicesAdapter(private val dataSet: List<Device>): RecyclerView.A
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val deviceItem: Device = dataSet[position]
 
-        // TODO Populate device item view
         holder.nameView.text = deviceItem.name
+
+        val inflater = LayoutInflater.from(holder.itemView.context)
+        deviceItem.services.forEach { serviceItem ->
+            val serviceViewHolder = ServiceViewHolder(inflater)
+
+            serviceViewHolder.nameView.text = serviceItem.name
+            serviceViewHolder.uuidView.text = serviceItem.uuid.toString()
+
+            serviceItem.characteristics.forEach {
+                val charViewHolder = ServiceDataAdapter.CharacteristicViewHolder(inflater)
+
+                charViewHolder.nameView.text = it.name
+                charViewHolder.uuidView.text = it.uuid.toString()
+
+                serviceViewHolder.characteristicsBlock.addView(charViewHolder.itemView)
+            }
+
+            holder.servicesView.addView(serviceViewHolder.itemView)
+        }
     }
 }

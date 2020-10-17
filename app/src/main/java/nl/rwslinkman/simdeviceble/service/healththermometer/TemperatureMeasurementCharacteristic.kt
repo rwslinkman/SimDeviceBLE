@@ -9,6 +9,9 @@ import java.util.*
  * See [Temperature Measurement](https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.temperature_measurement.xml)
  */
 class TemperatureMeasurementCharacteristic : Characteristic {
+    override val name: String
+        get() = "TemperatureMeasurement"
+
     override val uuid: UUID
         get() = UUID.fromString("00002A1C-0000-1000-8000-00805f9b34fb")
 

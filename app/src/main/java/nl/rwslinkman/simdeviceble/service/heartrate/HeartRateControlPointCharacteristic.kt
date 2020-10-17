@@ -8,6 +8,8 @@ import java.util.*
  * See [Heart Rate Control Point](https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_control_point.xml)
  */
 class HeartRateControlPointCharacteristic: Characteristic {
+    override val name: String
+        get() = "HeartRateControlPoint"
 
     override val uuid: UUID
         get() = CHAR_UUID
