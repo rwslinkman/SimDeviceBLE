@@ -8,6 +8,9 @@ Feel free to import the `app` module into your Android Studio project to simulat
 Contributing the proprietary devices, services and characteristics is appreciated but not required.     
 
 ## Usage
+Checkout the project and open it with Android Studio.   
+Run the `app` on your Android phone.   
+
 Make sure Bluetooth is enabled on your phone (use `Enable Bluetooth` button) and advertise a selected device.   
 The selected device will advertise the services associated to it.   
 All options available in the `Advertise` section will be used in the Advertisment data.   
@@ -18,13 +21,14 @@ Some characteristics will allow to update their value and notify all connected C
 Developers do not need to write their own View classes.   
 Services and characteristics are introspected and Views are created dynamically.   
 
-![Home screen allows for configuration of Advertisment data](docs/image_home_fragment.jpg)
-![Service Data screen manipulates data of all advertised characteristics](docs/image_home_fragment.jpg)
+![Home screen allows for configuration of Advertisement data](docs/image_home_fragment.jpg)
+![Service Data screen manipulates data of all advertised characteristics](docs/image_data_fragment.jpg)
 
 ## Contributing
-Please feel free to add any devices in the package `nl.rwslinkman.simdeviceble.device` package.   
+Please feel free to add any devices in the `nl.rwslinkman.simdeviceble.device` package.   
 All devices must implement the `Device` interface.  
-The list of `services` can contain any of the services defined in the `nl.rwslinkman.simdeviceble.service` package.    
+The list of `services` can contain any of the classes implementing `Service`.   
+They are defined in the `nl.rwslinkman.simdeviceble.service` package.    
 Don't forget to add the new device in the `AppModel.supportedDevices` list.   
 
 When adding a new `Service`, please implement according to the Bluetooth SIG specification as much as possible.
