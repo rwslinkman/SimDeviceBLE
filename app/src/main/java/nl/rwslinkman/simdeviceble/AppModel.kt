@@ -90,6 +90,8 @@ class AppModel: ViewModel() {
     }
 
     companion object {
+        val sourcesLink: String = "https://github.com/rwslinkman/simdeviceble"
+        val developerLink: String = "https://rwslinkman.nl"
         val supportedDevices: List<Device> = listOf(
             HeartRatePeripheral(),
             Clock(),

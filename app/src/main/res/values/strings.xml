@@ -3,4 +3,6 @@
     <string name="title_home">@string/app_name</string>
     <string name="title_supported_devices">Supported devices</string>
     <string name="title_servicedata">Service Data</string>
+    <string name="sources_link_label">Source code is available on <a href="">Github</a></string>
+    <string name="developer_link_label">Created by <a href="">Rick Slinkman</a> for developers</string>
 </resources>

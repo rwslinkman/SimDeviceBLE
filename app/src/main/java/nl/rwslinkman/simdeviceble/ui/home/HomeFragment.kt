@@ -1,6 +1,8 @@
 package nl.rwslinkman.simdeviceble.ui.home
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +17,7 @@ import androidx.lifecycle.Observer
 import nl.rwslinkman.simdeviceble.AppModel
 import nl.rwslinkman.simdeviceble.R
 import nl.rwslinkman.simdeviceble.device.model.Device
+
 
 class HomeFragment : Fragment() {
 
@@ -130,6 +133,15 @@ class HomeFragment : Fragment() {
         })
         //endregion
 
+        //region External links
+        root.findViewById<TextView>(R.id.home_sources_link).setOnClickListener {
+            openWebsite(AppModel.sourcesLink)
+        }
+
+        root.findViewById<TextView>(R.id.home_developer_link).setOnClickListener {
+            openWebsite(AppModel.developerLink)
+        }
+
         return root
     }
 
@@ -150,6 +162,11 @@ class HomeFragment : Fragment() {
         selectedDevice?.let {
             appModel.selectDevice(selectedDevice)
         }
+    }
+
+    private fun openWebsite(url: String) {
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(browserIntent)
     }
 
     companion object {
