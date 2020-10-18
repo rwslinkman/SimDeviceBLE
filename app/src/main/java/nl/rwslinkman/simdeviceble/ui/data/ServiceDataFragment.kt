@@ -22,9 +22,9 @@ import java.util.*
 class ServiceDataFragment : Fragment() {
 
     private val manipulationListener = object : ServiceDataAdapter.CharacteristicManipulationListener {
-        override fun setCharacteristicValue(characteristic: Characteristic, setValue: Editable) {
+        override fun setCharacteristicValue(characteristic: Characteristic, setValue: Any) {
             Log.d(TAG, "setCharacteristicValue: set value to $setValue")
-            appModel.updateCharacteristicValue(characteristic, setValue)
+            appModel.updateCharacteristicValue(characteristic, setValue.toString())
         }
 
         override fun notifyCharacteristic(characteristic: Characteristic) {

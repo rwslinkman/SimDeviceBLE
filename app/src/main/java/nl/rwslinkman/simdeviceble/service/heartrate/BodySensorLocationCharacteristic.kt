@@ -24,16 +24,26 @@ class BodySensorLocationCharacteristic: Characteristic {
     }
 
     override fun convertToPresentable(value: ByteArray): String {
-        // TODO
-        return value.first().toInt().toString()
+        val locationCode = value.first().toInt()
+        val locationName = when (locationCode) {
+            1 -> "Chest"
+            2 -> "Wrist"
+            3 -> "Finger"
+            4 -> "Hand"
+            5 -> "Ear lobe"
+            6 -> "Foot"
+            else -> "Other"
+        }
+        return "$locationName ($locationCode)"
     }
 
-    override fun convertToBytes(value: Editable): ByteArray {
-        // TODO
-        return ByteArray(1)
+    override fun convertToBytes(value: String): ByteArray {
+        val retVal = ByteArray(1)
+        retVal[0] = value.toByte()
+        return retVal
     }
 
     companion object {
-        val CHAR_UUID = UUID.fromString("00002A38-0000-1000-8000-00805f9b34fb")
+        val CHAR_UUID: UUID = UUID.fromString("00002A38-0000-1000-8000-00805f9b34fb")
     }
 }

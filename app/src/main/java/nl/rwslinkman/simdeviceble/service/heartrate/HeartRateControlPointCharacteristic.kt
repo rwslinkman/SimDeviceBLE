@@ -28,12 +28,11 @@ class HeartRateControlPointCharacteristic: Characteristic {
         return value.first().toInt().toString()
     }
 
-    override fun convertToBytes(value: Editable): ByteArray {
-        // TODO
-        return ByteArray(1)
+    override fun convertToBytes(value: String): ByteArray {
+        return value.toByteArray()
     }
 
     companion object {
-        val CHAR_UUID = UUID.fromString("00002A39-0000-1000-8000-00805f9b34fb")
+        val CHAR_UUID: UUID = UUID.fromString("00002A39-0000-1000-8000-00805f9b34fb")
     }
 }

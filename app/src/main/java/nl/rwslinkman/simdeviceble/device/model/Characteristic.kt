@@ -35,5 +35,5 @@ interface Characteristic {
 
     fun validateWrite(offset: Int, value: ByteArray?): Int
     fun convertToPresentable(value: ByteArray): String
-    fun convertToBytes(value: Editable): ByteArray
+    fun convertToBytes(value: String): ByteArray
 }

@@ -32,9 +32,8 @@ class TemperatureMeasurementCharacteristic : Characteristic {
         return value.first().toInt().toString()
     }
 
-    override fun convertToBytes(value: Editable): ByteArray {
-        // TODO
-        return ByteArray(1)
+    override fun convertToBytes(value: String): ByteArray {
+        return value.toByteArray()
     }
 
     companion object {

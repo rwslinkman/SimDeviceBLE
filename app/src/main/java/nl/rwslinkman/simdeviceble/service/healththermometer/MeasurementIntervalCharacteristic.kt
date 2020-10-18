@@ -30,6 +30,9 @@ class MeasurementIntervalCharacteristic: Characteristic {
     override val description: String?
         get() = MEASUREMENT_INTERVAL_DESCRIPTION
 
+    override val initialValue: ByteArray?
+        get() = convertToBytes(INITIAL_MEASUREMENT_INTERVAL.toString())
+
     override fun validateWrite(offset: Int, value: ByteArray?): Int {
         if (offset != 0) {
             return BluetoothGatt.GATT_INVALID_OFFSET
@@ -56,9 +59,8 @@ class MeasurementIntervalCharacteristic: Characteristic {
         return value.first().toInt().toString()
     }
 
-    override fun convertToBytes(value: Editable): ByteArray {
-        // TODO
-        return ByteArray(1)
+    override fun convertToBytes(value: String): ByteArray {
+        return value.toByteArray()
     }
 
     private fun isValueWithinLimits(value: Short): Boolean {
@@ -66,11 +68,11 @@ class MeasurementIntervalCharacteristic: Characteristic {
     }
 
     companion object {
-        private val MEASUREMENT_INTERVAL_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT16
-        private val INITIAL_MEASUREMENT_INTERVAL = 1
-        private val MIN_MEASUREMENT_INTERVAL = 1
+        private const val MEASUREMENT_INTERVAL_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT16
+        private const val INITIAL_MEASUREMENT_INTERVAL = 1
+        private const val MIN_MEASUREMENT_INTERVAL = 1
         private val MAX_MEASUREMENT_INTERVAL = Math.pow(2.0, 16.0).toInt() - 1
-        private val MEASUREMENT_INTERVAL_DESCRIPTION = "This characteristic is used " +
+        private const val MEASUREMENT_INTERVAL_DESCRIPTION = "This characteristic is used " +
                 "to enable and control the interval between consecutive temperature measurements."
     }
 }

@@ -68,7 +68,7 @@ class AppModel: ViewModel() {
         postDataContainer()
     }
 
-    fun updateCharacteristicValue(characteristic: Characteristic, value: Editable) {
+    fun updateCharacteristicValue(characteristic: Characteristic, value: String) {
         val byteValue: ByteArray = characteristic.convertToBytes(value)
         updateDataContainer(characteristic, byteValue)
     }

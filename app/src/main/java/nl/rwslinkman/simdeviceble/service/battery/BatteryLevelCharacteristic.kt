@@ -1,7 +1,6 @@
 package nl.rwslinkman.simdeviceble.service.battery
 
 import android.bluetooth.BluetoothGatt
-import android.text.Editable
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import java.util.*
 
@@ -21,17 +20,29 @@ class BatteryLevelCharacteristic: Characteristic {
     override val description: String?
         get() = BATTERY_LEVEL_DESCRIPTION
 
+    override val initialValue: ByteArray?
+        get() = convertToBytes(INITIAL_BATTERY_LEVEL.toString())
+
     override fun validateWrite(offset: Int, value: ByteArray?): Int {
-        return BluetoothGatt.GATT_SUCCESS
+        value?.let {
+            val batteryPercentage: Int = value[0].toInt()
+            return if(batteryPercentage in 0..BATTERY_LEVEL_MAX) {
+                BluetoothGatt.GATT_SUCCESS
+            } else {
+                BluetoothGatt.GATT_FAILURE
+            }
+
+        }
+        return BluetoothGatt.GATT_FAILURE
     }
 
     override fun convertToPresentable(value: ByteArray): String {
-        // TODO
-        return value.first().toInt().toString()
+        val batteryValue = value.first().toInt()
+        return "$batteryValue%"
     }
 
-    override fun convertToBytes(value: Editable): ByteArray {
-        val batteryValue: Int = value.toString().toInt()
+    override fun convertToBytes(value: String): ByteArray {
+        val batteryValue: Int = value.toInt()
         val retVal = ByteArray(1)
         retVal[0] = batteryValue.toByte()
         return retVal

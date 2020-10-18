@@ -1,6 +1,5 @@
 package nl.rwslinkman.simdeviceble.ui.data
 
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,7 @@ import java.util.*
 class ServiceDataAdapter(private val listener: CharacteristicManipulationListener): RecyclerView.Adapter<ServiceDataViewHolder>() {
 
     interface CharacteristicManipulationListener {
-        fun setCharacteristicValue(characteristic: Characteristic, setValue: Editable)
+        fun setCharacteristicValue(characteristic: Characteristic, setValue: Any)
 
         fun notifyCharacteristic(characteristic: Characteristic)
     }
