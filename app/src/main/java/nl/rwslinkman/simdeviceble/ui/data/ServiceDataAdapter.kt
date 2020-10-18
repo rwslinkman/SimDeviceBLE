@@ -4,13 +4,14 @@ import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import nl.rwslinkman.simdeviceble.R
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Service
+import nl.rwslinkman.simdeviceble.ui.data.controls.CharacteristicControls
+import nl.rwslinkman.simdeviceble.ui.data.controls.NumberCharacteristicControls
 
-class ServiceDataAdapter(private val listener: CharacteristicManipulationListener): RecyclerView.Adapter<ServiceDataAdapter.ViewHolder>() {
+class ServiceDataAdapter(private val listener: CharacteristicManipulationListener): RecyclerView.Adapter<ServiceDataViewHolder>() {
 
     interface CharacteristicManipulationListener {
         fun setCharacteristicValue(characteristic: Characteristic, setValue: Editable)
@@ -20,31 +21,17 @@ class ServiceDataAdapter(private val listener: CharacteristicManipulationListene
 
     private val dataSet: MutableList<Service> = mutableListOf()
 
-    class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val nameView: TextView = itemView.findViewById(R.id.item_service_name)
-        val uuidView: TextView = itemView.findViewById(R.id.item_service_uuid)
-        val characteristicsBlock: ViewGroup = itemView.findViewById(R.id.item_service_characteristics)
-    }
-
-    private class CharacteristicViewHolder(inflater: LayoutInflater) {
-        val itemView: View = inflater.inflate(R.layout.list_item_characteristic, null)
-        val nameView: TextView = itemView.findViewById(R.id.item_characteristic_name)
-        val uuidView: TextView = itemView.findViewById(R.id.item_characteristic_uuid)
-        val valueView: TextView = itemView.findViewById(R.id.item_characteristic_value)
-        val updateBlock: ViewGroup = itemView.findViewById(R.id.item_characteristic_updates_block)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServiceDataViewHolder {
         val itemRoot: View = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_item_servicedata, parent, false)
-        return ViewHolder(itemRoot)
+        return ServiceDataViewHolder(itemRoot)
     }
 
     override fun getItemCount(): Int {
         return dataSet.size
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ServiceDataViewHolder, position: Int) {
         val serviceItem: Service = dataSet[position]
 
         holder.nameView.text = serviceItem.name
@@ -53,26 +40,21 @@ class ServiceDataAdapter(private val listener: CharacteristicManipulationListene
         val inflater = LayoutInflater.from(holder.itemView.context)
         serviceItem.characteristics.forEach { charItem ->
             // Dynamically add child views
-            val charViewHolder = CharacteristicViewHolder(inflater)
+            val charViewHolder = CharacteristicDataViewHolder(inflater)
             charViewHolder.nameView.text = charItem.name
             charViewHolder.uuidView.text = charItem.uuid.toString()
 
+            var updateControls: CharacteristicControls? = null
+            // TODO CHose updateControls type based on characteristic
             if (charItem.isRead) {
-                val updateControls: View
-                // TODO: Add more types of update controls
-                val numberControlsLayout = R.layout.characteristic_update_control_number
-                updateControls = inflater.inflate(numberControlsLayout, charViewHolder.updateBlock)
-                val valueControl: EditText = updateControls.findViewById(R.id.characterstic_control_edittext)
+                updateControls = NumberCharacteristicControls()
+            }
 
-                updateControls.findViewById<Button>(R.id.characteristic_control_set_btn).setOnClickListener {
-                    val fieldValue: Editable = valueControl.text
-                    listener.setCharacteristicValue(charItem, fieldValue)
-                }
-                val notifyBtn = updateControls.findViewById<Button>(R.id.characteristic_control_notify_btn)
-                notifyBtn.isEnabled = charItem.isNotify
-                notifyBtn.setOnClickListener {
-                    listener.notifyCharacteristic(charItem)
-                }
+            updateControls?.let {
+                val controlsView: View = inflater.inflate(it.controlsLayoutId, charViewHolder.updateBlock)
+                it.setup(controlsView)
+
+                it.bind(charItem, listener)
             }
 
             holder.characteristicsBlock.addView(charViewHolder.itemView)

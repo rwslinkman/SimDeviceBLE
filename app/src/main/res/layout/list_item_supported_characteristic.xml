@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:text="CharacteristicName"
         android:textSize="16sp"
         android:textColor="#000000"
         />
@@ -21,15 +20,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/item_characteristic_name"
-        android:text="CharUUID"
         android:textSize="12sp" />
-
-    <RelativeLayout
-        android:id="@+id/item_characteristic_updates_block"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/item_characteristic_uuid"
-        android:orientation="horizontal"
-        />
 
 </RelativeLayout>
