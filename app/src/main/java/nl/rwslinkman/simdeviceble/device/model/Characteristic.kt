@@ -1,5 +1,6 @@
 package nl.rwslinkman.simdeviceble.device.model
 
+import android.text.Editable
 import java.util.*
 
 interface Characteristic {
@@ -29,5 +30,10 @@ interface Characteristic {
     val description: String?
         get() = null
 
+    val initialValue: ByteArray?
+        get() = null
+
     fun validateWrite(offset: Int, value: ByteArray?): Int
+    fun convertToPresentable(value: ByteArray): String
+    fun convertToBytes(value: Editable): ByteArray
 }

@@ -17,12 +17,14 @@ import nl.rwslinkman.simdeviceble.AppModel
 import nl.rwslinkman.simdeviceble.R
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Device
+import java.util.*
 
 class ServiceDataFragment : Fragment() {
 
     private val manipulationListener = object : ServiceDataAdapter.CharacteristicManipulationListener {
         override fun setCharacteristicValue(characteristic: Characteristic, setValue: Editable) {
             Log.d(TAG, "setCharacteristicValue: set value to $setValue")
+            appModel.updateCharacteristicValue(characteristic, setValue)
         }
 
         override fun notifyCharacteristic(characteristic: Characteristic) {
@@ -50,7 +52,10 @@ class ServiceDataFragment : Fragment() {
             adapter = servicesAdapter
         }
         appModel.activeDevice.observe(this, Observer {
-            showDeviceServices(it)
+            showDeviceServices()
+        })
+        appModel.presentableDataContainer.observe(this, Observer {
+            showDeviceServices()
         })
 
         // Toggle view visibility
@@ -61,13 +66,16 @@ class ServiceDataFragment : Fragment() {
         return root
     }
 
-    private fun showDeviceServices(device: Device) {
+    private fun showDeviceServices() {
         val isAdvertising: Boolean = appModel.isAdvertising.value ?: false
         if (!isAdvertising) {
             return
         }
 
-        servicesAdapter.updateDataSet(device.services)
+        val activeDevice: Device = appModel.activeDevice.value!!
+        val currentData: Map<UUID, String> = appModel.presentableDataContainer.value!!
+
+        servicesAdapter.updateDataSet(activeDevice.services, currentData)
     }
 
     companion object {

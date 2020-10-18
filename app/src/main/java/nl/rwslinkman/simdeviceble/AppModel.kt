@@ -1,5 +1,6 @@
 package nl.rwslinkman.simdeviceble
 
+import android.text.Editable
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import nl.rwslinkman.simdeviceble.bluetooth.BluetoothDelegate
@@ -7,6 +8,8 @@ import nl.rwslinkman.simdeviceble.device.HeartRatePeripheral
 import nl.rwslinkman.simdeviceble.device.model.Device
 import nl.rwslinkman.simdeviceble.device.Clock
 import nl.rwslinkman.simdeviceble.device.EarThermometer
+import nl.rwslinkman.simdeviceble.device.model.Characteristic
+import java.util.*
 
 class AppModel: ViewModel() {
 
@@ -23,6 +26,9 @@ class AppModel: ViewModel() {
     // Data for Connections UI
     private val _connDevices: MutableSet<String> = mutableSetOf()
     val connectedDevices: MutableLiveData<List<String>> = MutableLiveData()
+    // Characteristic data manipulation
+    private val _dataContainer: MutableMap<UUID, ByteArray> = mutableMapOf()
+    val presentableDataContainer: MutableLiveData<Map<UUID, String>> = MutableLiveData(mutableMapOf())
 
     // Handle to Activity for BLE related operations
     val bluetoothDelegate: MutableLiveData<BluetoothDelegate> = MutableLiveData()
@@ -55,6 +61,28 @@ class AppModel: ViewModel() {
     fun onDeviceDisconnected(device: String) {
         _connDevices.remove(device)
         connectedDevices.postValue(_connDevices.toList())
+    }
+
+    fun updateDataContainer(characteristic: Characteristic, charValue: ByteArray) {
+        _dataContainer[characteristic.uuid] = charValue
+        postDataContainer()
+    }
+
+    fun updateCharacteristicValue(characteristic: Characteristic, value: Editable) {
+        val byteValue: ByteArray = characteristic.convertToBytes(value)
+        updateDataContainer(characteristic, byteValue)
+    }
+
+    private fun postDataContainer() {
+        bluetoothDelegate.value?.updateCharacteristicValues(_dataContainer)
+
+        // Convert to data for Fragments
+        val presentable = mutableMapOf<UUID, String>()
+        _dataContainer.forEach {
+            val char = activeDevice.value!!.getCharacteristic(it.key)
+            presentable[it.key] = char?.convertToPresentable(it.value) ?: ""
+        }
+        presentableDataContainer.postValue(presentable)
     }
 
     companion object {

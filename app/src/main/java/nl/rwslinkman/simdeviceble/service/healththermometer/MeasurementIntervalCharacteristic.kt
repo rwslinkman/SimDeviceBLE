@@ -2,6 +2,7 @@ package nl.rwslinkman.simdeviceble.service.healththermometer
 
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
+import android.text.Editable
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -48,6 +49,16 @@ class MeasurementIntervalCharacteristic: Characteristic {
                 BluetoothGatt.GATT_FAILURE
             } else BluetoothGatt.GATT_SUCCESS
         } ?: return BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH
+    }
+
+    override fun convertToPresentable(value: ByteArray): String {
+        // TODO
+        return value.first().toInt().toString()
+    }
+
+    override fun convertToBytes(value: Editable): ByteArray {
+        // TODO
+        return ByteArray(1)
     }
 
     private fun isValueWithinLimits(value: Short): Boolean {

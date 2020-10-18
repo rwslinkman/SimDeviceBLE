@@ -12,10 +12,9 @@ abstract class Device {
     fun getCharacteristic(uuid: UUID?): Characteristic? {
         val result = services.flatMap {
             it.characteristics
-        }
+        }.first { uuid == it.uuid }
         Log.d(TAG, "getCharacteristic: uuid found $result")
-//            .first { it.uuid == uuid }
-        return result.first()
+        return result
     }
 
     companion object {

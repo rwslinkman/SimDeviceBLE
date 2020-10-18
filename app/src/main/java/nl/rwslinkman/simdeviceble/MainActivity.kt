@@ -14,6 +14,7 @@ import nl.rwslinkman.simdeviceble.bluetooth.AdvertiseCommand
 import nl.rwslinkman.simdeviceble.bluetooth.AdvertisementManager
 import nl.rwslinkman.simdeviceble.bluetooth.BluetoothDelegate
 import nl.rwslinkman.simdeviceble.device.model.Device
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,6 +35,10 @@ class MainActivity : AppCompatActivity() {
 
         override fun stopAdvertising() {
             advManager?.stop()
+        }
+
+        override fun updateCharacteristicValues(characteristicData: MutableMap<UUID, ByteArray>) {
+            advManager?.updateAdvertisedCharacteristics(characteristicData)
         }
     }
 

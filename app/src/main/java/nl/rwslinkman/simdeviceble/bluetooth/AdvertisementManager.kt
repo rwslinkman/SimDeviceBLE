@@ -11,7 +11,10 @@ import nl.rwslinkman.simdeviceble.AppModel
 import nl.rwslinkman.simdeviceble.MainActivity
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Device
-import java.util.*
+import java.util.UUID
+import java.util.LinkedList
+import java.util.Queue
+import java.util.Arrays
 
 class AdvertisementManager(
     private val context: MainActivity,
@@ -23,6 +26,7 @@ class AdvertisementManager(
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
     private val advertiser = bluetoothAdapter.bluetoothLeAdvertiser
     private var gattServer: BluetoothGattServer? = null
+
     // Only used when advertising
     private lateinit var addServiceQueue: Queue<BluetoothGattService>
     private lateinit var advertiseCommand: AdvertiseCommand
@@ -100,13 +104,20 @@ class AdvertisementManager(
             Log.i(TAG, "onCharacteristicWriteRequest: Characteristic Write request")
 
             var status: Int = BluetoothGatt.GATT_SUCCESS
-            val characteristicModel = advertiseCommand.device.getCharacteristic(characteristic?.uuid)
-            characteristicModel?.let {
+            val characteristicModel =
+                advertiseCommand.device.getCharacteristic(characteristic?.uuid)
+            characteristicModel?.let { charModel ->
+                // Let characteristic decide if write value is OK
                 status = characteristicModel.validateWrite(offset, value)
+
+                value?.let {
+                    characteristic?.value = value
+                    if (status == BluetoothGatt.GATT_SUCCESS) {
+                        appModel.updateDataContainer(charModel, it)
+                    }
+                }
             }
 
-            characteristic?.value = value
-            // TODO: Store in model
             if (responseNeeded) {
                 gattServer?.sendResponse(device, requestId, status, 0, null)
             }
@@ -268,7 +279,11 @@ class AdvertisementManager(
                         gattCharacteristic.addDescriptor(descriptor)
                     }
 
-                    // TODO: Set initial value on Characteristic
+                    val initialValue: ByteArray? = it.initialValue
+                    initialValue?.let { initVal ->
+                        gattCharacteristic.value = initialValue
+                        appModel.updateDataContainer(it, initVal)
+                    }
 
                     gattCharacteristic
                 }
@@ -332,6 +347,16 @@ class AdvertisementManager(
             .setIncludeDeviceName(advertiseCommand.includeDeviceName)
             .build()
         advertiser.startAdvertising(mAdvSettings, mAdvData, mAdvScanResponse, scanCallback)
+    }
+
+    fun updateAdvertisedCharacteristics(characteristicData: MutableMap<UUID, ByteArray>) {
+        gattServer?.services?.flatMap { it.characteristics }?.forEach {
+            // Gather all advertised characteristics to check if update can be set
+            val updateValue: ByteArray? = characteristicData[it.uuid]
+            updateValue?.let { upVal ->
+                it.value = upVal
+            }
+        }
     }
 
     companion object {
