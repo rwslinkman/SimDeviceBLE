@@ -13,6 +13,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import nl.rwslinkman.simdeviceble.bluetooth.AdvertiseCommand
 import nl.rwslinkman.simdeviceble.bluetooth.AdvertisementManager
 import nl.rwslinkman.simdeviceble.bluetooth.BluetoothDelegate
+import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Device
 import java.util.*
 
@@ -39,6 +40,10 @@ class MainActivity : AppCompatActivity() {
 
         override fun updateCharacteristicValues(characteristicData: MutableMap<UUID, ByteArray>) {
             advManager?.updateAdvertisedCharacteristics(characteristicData)
+        }
+
+        override fun sendNotificationToConnectedDevices(characteristic: Characteristic) {
+            advManager?.sendNotificationToConnectedDevices(characteristic)
         }
     }
 

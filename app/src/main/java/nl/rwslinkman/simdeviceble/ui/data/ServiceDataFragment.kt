@@ -29,6 +29,7 @@ class ServiceDataFragment : Fragment() {
 
         override fun notifyCharacteristic(characteristic: Characteristic) {
             Log.d(TAG, "notifyCharacteristic: send notification")
+            appModel.sendCharacteristicNotification(characteristic)
         }
 
     }

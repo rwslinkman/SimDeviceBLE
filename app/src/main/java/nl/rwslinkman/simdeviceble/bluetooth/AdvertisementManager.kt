@@ -11,10 +11,8 @@ import nl.rwslinkman.simdeviceble.AppModel
 import nl.rwslinkman.simdeviceble.MainActivity
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Device
-import java.util.UUID
-import java.util.LinkedList
-import java.util.Queue
-import java.util.Arrays
+import java.util.*
+
 
 class AdvertisementManager(
     private val context: MainActivity,
@@ -26,6 +24,7 @@ class AdvertisementManager(
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
     private val advertiser = bluetoothAdapter.bluetoothLeAdvertiser
     private var gattServer: BluetoothGattServer? = null
+    private val connectedDevices: MutableMap<String, BluetoothDevice> =  mutableMapOf()
 
     // Only used when advertising
     private lateinit var addServiceQueue: Queue<BluetoothGattService>
@@ -36,11 +35,10 @@ class AdvertisementManager(
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 if (newState == BluetoothGatt.STATE_CONNECTED) {
                     device?.let {
-                        Log.i(
-                            TAG,
-                            "onConnectionStateChange: connected to ${device.name} [${device.address}]"
+                        Log.i(TAG,
+                            "onConnectionStateChange: connected to ${it.name} [${it.address}]"
                         )
-                        appModel.onDeviceConnected(device.address)
+                        onDeviceConnected(it)
                     }
                 } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
                     device?.let {
@@ -48,7 +46,7 @@ class AdvertisementManager(
                             TAG,
                             "onConnectionStateChange: disconnected from ${device.name} [${device.address}]"
                         )
-                        appModel.onDeviceDisconnected(device.address)
+                        onDeviceDisconnected(device)
                     }
                 }
             } else {
@@ -57,7 +55,7 @@ class AdvertisementManager(
                         TAG,
                         "onConnectionStateChange: Connect error while connecting ${device.name} [${device.address}]"
                     )
-                    appModel.onDeviceDisconnected(device.address)
+                    onDeviceDisconnected(device)
                 }
             }
         }
@@ -350,13 +348,40 @@ class AdvertisementManager(
     }
 
     fun updateAdvertisedCharacteristics(characteristicData: MutableMap<UUID, ByteArray>) {
-        gattServer?.services?.flatMap { it.characteristics }?.forEach {
+        getAdvertisedGattCharacteristics()?.forEach {
             // Gather all advertised characteristics to check if update can be set
             val updateValue: ByteArray? = characteristicData[it.uuid]
             updateValue?.let { upVal ->
                 it.value = upVal
             }
         }
+    }
+
+    fun sendNotificationToConnectedDevices(characteristic: Characteristic) {
+        val indicate = characteristic.isIndicate
+        val notifyMe: BluetoothGattCharacteristic? = getAdvertisedGattCharacteristics()?.first {
+            it.uuid == characteristic.uuid
+        }
+
+        notifyMe?.let {
+            for (device in connectedDevices.values) {
+                gattServer?.notifyCharacteristicChanged(device, it, indicate)
+            }
+        }
+    }
+
+    private fun onDeviceConnected(device: BluetoothDevice) {
+        connectedDevices[device.address] = device
+        appModel.onDeviceConnected(device.address)
+    }
+
+    private fun onDeviceDisconnected(device: BluetoothDevice) {
+        connectedDevices.remove(device.address)
+        appModel.onDeviceDisconnected(device.address)
+    }
+
+    private fun getAdvertisedGattCharacteristics(): List<BluetoothGattCharacteristic>? {
+        return gattServer?.services?.flatMap { it.characteristics }
     }
 
     companion object {

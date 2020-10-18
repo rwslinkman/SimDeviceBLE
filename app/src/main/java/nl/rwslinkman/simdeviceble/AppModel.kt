@@ -73,6 +73,10 @@ class AppModel: ViewModel() {
         updateDataContainer(characteristic, byteValue)
     }
 
+    fun sendCharacteristicNotification(characteristic: Characteristic) {
+        bluetoothDelegate.value?.sendNotificationToConnectedDevices(characteristic)
+    }
+
     private fun postDataContainer() {
         bluetoothDelegate.value?.updateCharacteristicValues(_dataContainer)
 

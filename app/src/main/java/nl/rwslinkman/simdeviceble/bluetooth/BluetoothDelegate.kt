@@ -1,5 +1,6 @@
 package nl.rwslinkman.simdeviceble.bluetooth
 
+import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Device
 import java.util.*
 
@@ -12,4 +13,6 @@ interface BluetoothDelegate {
     fun stopAdvertising()
 
     fun updateCharacteristicValues(characteristicData: MutableMap<UUID, ByteArray>)
+
+    fun sendNotificationToConnectedDevices(characteristic: Characteristic)
 }
