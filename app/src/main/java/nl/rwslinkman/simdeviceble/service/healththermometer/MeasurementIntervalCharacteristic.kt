@@ -1,12 +1,12 @@
 package nl.rwslinkman.simdeviceble.service.healththermometer
 
 import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCharacteristic
-import android.text.Editable
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.*
+import kotlin.math.pow
+
 
 /**
  * See [Measurement Interval](https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.measurement_interval.xml)
@@ -55,23 +55,28 @@ class MeasurementIntervalCharacteristic: Characteristic {
     }
 
     override fun convertToPresentable(value: ByteArray): String {
-        // TODO
-        return value.first().toInt().toString()
+        val buffer = ByteBuffer.allocate(Int.SIZE_BYTES)
+        buffer.put(value)
+        buffer.flip()
+        val interval = buffer.int
+        return "$interval second(s)"
     }
 
     override fun convertToBytes(value: String): ByteArray {
-        return value.toByteArray()
+        val newLevel = Integer.parseInt(value)
+        val buffer: ByteBuffer = ByteBuffer.allocate(Int.SIZE_BYTES)
+        buffer.putInt(newLevel)
+        return buffer.array()
     }
 
     private fun isValueWithinLimits(value: Short): Boolean {
-        return (value >= MIN_MEASUREMENT_INTERVAL) && (value <= MAX_MEASUREMENT_INTERVAL);
+        return (value >= MIN_MEASUREMENT_INTERVAL) && (value <= MAX_MEASUREMENT_INTERVAL)
     }
 
     companion object {
-        private const val MEASUREMENT_INTERVAL_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT16
         private const val INITIAL_MEASUREMENT_INTERVAL = 1
         private const val MIN_MEASUREMENT_INTERVAL = 1
-        private val MAX_MEASUREMENT_INTERVAL = Math.pow(2.0, 16.0).toInt() - 1
+        private val MAX_MEASUREMENT_INTERVAL = 2.0.pow(16.0).toInt() - 1
         private const val MEASUREMENT_INTERVAL_DESCRIPTION = "This characteristic is used " +
                 "to enable and control the interval between consecutive temperature measurements."
     }

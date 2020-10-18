@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
     }
 
-    fun startBluetoothIntent() {
+    private fun startBluetoothIntent() {
         val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
     }

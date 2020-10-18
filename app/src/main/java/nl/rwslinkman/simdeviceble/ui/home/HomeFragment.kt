@@ -34,6 +34,7 @@ class HomeFragment : Fragment() {
             updateSelectedDevice(selectedItem)
         }
     }
+    private lateinit var deviceSelectorAdapter: ArrayAdapter<String>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,7 +73,8 @@ class HomeFragment : Fragment() {
         val advertisementNameView: TextView = root.findViewById(R.id.advertising_name_value)
         val deviceSelector: Spinner = root.findViewById(R.id.advertising_device_value)
         val connectableSwitch: SwitchCompat = root.findViewById(R.id.advertising_connectable_value)
-        val advertiseDeviceNameSwitch: SwitchCompat = root.findViewById(R.id.advertising_allowname_value)
+        val advertiseDeviceNameSwitch: SwitchCompat =
+            root.findViewById(R.id.advertising_allowname_value)
         val advertiseStartBtn = root.findViewById<Button>(R.id.advertising_start_btn)
         val advertiseStopBtn = root.findViewById<Button>(R.id.advertising_stop_btn)
 
@@ -90,8 +92,12 @@ class HomeFragment : Fragment() {
             advertisementNameView.text = it
         })
 
-
         setupDeviceSelector(deviceSelector)
+        appModel.activeDevice.observe(this, Observer {
+                val selectedName = it.name
+                val selectedItemPos = deviceSelectorAdapter.getPosition(selectedName)
+                deviceSelector.setSelection(selectedItemPos)
+        })
 
         appModel.isConnectable.observe(this, Observer {
             connectableSwitch.isChecked = it
@@ -128,17 +134,19 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupDeviceSelector(deviceSelector: Spinner) {
-        val adapter = ArrayAdapter(
+        deviceSelectorAdapter = ArrayAdapter(
             activity as Context,
             R.layout.spinner_item_device,
-            AppModel.supportedDevices.map { it.name })
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        deviceSelector.adapter = adapter
+            AppModel.supportedDevices.map { it.name }
+        )
+        deviceSelectorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        deviceSelector.adapter = deviceSelectorAdapter
         deviceSelector.onItemSelectedListener = selectorListener
     }
 
     private fun updateSelectedDevice(selectedDeviceName: String) {
-        val selectedDevice: Device? = AppModel.supportedDevices.find { selectedDeviceName == it.name }
+        val selectedDevice: Device? =
+            AppModel.supportedDevices.find { selectedDeviceName == it.name }
         selectedDevice?.let {
             appModel.selectDevice(selectedDevice)
         }

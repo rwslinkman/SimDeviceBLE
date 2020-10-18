@@ -9,7 +9,7 @@ class CurrentTimeService: Service {
         get() = "CurrentTimeService"
 
     override val uuid: UUID
-        get() = UUID.randomUUID()
+        get() = UUID.fromString("00001805-0000-1000-8000-00805f9b34fb")
 
     override val characteristics: List<Characteristic>
         get() = listOf()

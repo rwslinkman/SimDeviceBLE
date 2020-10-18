@@ -13,7 +13,6 @@ import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Device
 import java.util.*
 
-
 class AdvertisementManager(
     private val context: MainActivity,
     bluetoothAdapter: BluetoothAdapter,
@@ -257,6 +256,29 @@ class AdvertisementManager(
         appModel.isAdvertising.postValue(false)
     }
 
+    fun updateAdvertisedCharacteristics(characteristicData: MutableMap<UUID, ByteArray>) {
+        getAdvertisedGattCharacteristics()?.forEach {
+            // Gather all advertised characteristics to check if update can be set
+            val updateValue: ByteArray? = characteristicData[it.uuid]
+            updateValue?.let { upVal ->
+                it.value = upVal
+            }
+        }
+    }
+
+    fun sendNotificationToConnectedDevices(characteristic: Characteristic) {
+        val indicate = characteristic.isIndicate
+        val notifyMe: BluetoothGattCharacteristic? = getAdvertisedGattCharacteristics()?.first {
+            it.uuid == characteristic.uuid
+        }
+
+        notifyMe?.let {
+            for (device in connectedDevices.values) {
+                gattServer?.notifyCharacteristicChanged(device, it, indicate)
+            }
+        }
+    }
+
     private fun createServices(device: Device): List<BluetoothGattService> {
         return device.services.map { service ->
             val gattService =
@@ -345,29 +367,6 @@ class AdvertisementManager(
             .setIncludeDeviceName(advertiseCommand.includeDeviceName)
             .build()
         advertiser.startAdvertising(mAdvSettings, mAdvData, mAdvScanResponse, scanCallback)
-    }
-
-    fun updateAdvertisedCharacteristics(characteristicData: MutableMap<UUID, ByteArray>) {
-        getAdvertisedGattCharacteristics()?.forEach {
-            // Gather all advertised characteristics to check if update can be set
-            val updateValue: ByteArray? = characteristicData[it.uuid]
-            updateValue?.let { upVal ->
-                it.value = upVal
-            }
-        }
-    }
-
-    fun sendNotificationToConnectedDevices(characteristic: Characteristic) {
-        val indicate = characteristic.isIndicate
-        val notifyMe: BluetoothGattCharacteristic? = getAdvertisedGattCharacteristics()?.first {
-            it.uuid == characteristic.uuid
-        }
-
-        notifyMe?.let {
-            for (device in connectedDevices.values) {
-                gattServer?.notifyCharacteristicChanged(device, it, indicate)
-            }
-        }
     }
 
     private fun onDeviceConnected(device: BluetoothDevice) {

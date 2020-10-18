@@ -1,14 +1,13 @@
 package nl.rwslinkman.simdeviceble
 
-import android.text.Editable
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import nl.rwslinkman.simdeviceble.bluetooth.BluetoothDelegate
-import nl.rwslinkman.simdeviceble.device.HeartRatePeripheral
-import nl.rwslinkman.simdeviceble.device.model.Device
 import nl.rwslinkman.simdeviceble.device.Clock
 import nl.rwslinkman.simdeviceble.device.EarThermometer
+import nl.rwslinkman.simdeviceble.device.HeartRatePeripheral
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
+import nl.rwslinkman.simdeviceble.device.model.Device
 import java.util.*
 
 class AppModel: ViewModel() {
@@ -51,6 +50,7 @@ class AppModel: ViewModel() {
 
     fun stopAdvertising() {
         bluetoothDelegate.value?.stopAdvertising()
+        _dataContainer.clear()
     }
 
     fun onDeviceConnected(device: String) {
