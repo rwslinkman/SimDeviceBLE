@@ -96,3 +96,4 @@ lint/tmp/
 /captures
 .cxx
 .idea
+grpc/generated_java
