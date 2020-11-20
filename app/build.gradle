@@ -11,10 +11,17 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    sourceSets {
+        main {
+            java {
+                srcDirs += "build/generated/src"
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -28,7 +35,12 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    sourceSets.main.java.srcDirs += "build/generated/src"
+    packagingOptions {
+        pickFirst "META-INF/INDEX.LIST"
+        pickFirst "META-INF/LICENSE"
+        pickFirst "META-INF/io.netty.versions.properties"
+        pickFirst 'META-INF/services/io.grpc.ManagedChannelProvider'
+    }
 }
 
 dependencies {
@@ -44,8 +56,10 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.1.0'
     implementation 'androidx.navigation:navigation-ui-ktx:2.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'io.grpc:grpc-netty:1.33.1'
     implementation 'io.grpc:grpc-protobuf:1.33.1'
     implementation 'io.grpc:grpc-stub:1.33.1'
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
