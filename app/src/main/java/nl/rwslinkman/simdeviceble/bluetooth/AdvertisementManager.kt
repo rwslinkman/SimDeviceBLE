@@ -7,17 +7,22 @@ import android.bluetooth.le.AdvertiseSettings
 import android.content.Context
 import android.os.ParcelUuid
 import android.util.Log
-import nl.rwslinkman.simdeviceble.AppModel
-import nl.rwslinkman.simdeviceble.MainActivity
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Device
 import java.util.*
 
 class AdvertisementManager(
-    private val context: MainActivity,
+    private val context: Context,
     bluetoothAdapter: BluetoothAdapter,
-    private val appModel: AppModel
+    private val appModel: Listener
 ) {
+    interface Listener {
+        fun updateDataContainer(characteristic: Characteristic, data: ByteArray)
+        fun setIsAdvertising(isAdvertising: Boolean)
+        fun onDeviceConnected(deviceAddress: String)
+        fun onDeviceDisconnected(deviceAddress: String)
+    }
+
     // Overall used variables
     private val bluetoothManager: BluetoothManager =
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -219,7 +224,7 @@ class AdvertisementManager(
         override fun onStartSuccess(settingsInEffect: AdvertiseSettings?) {
             super.onStartSuccess(settingsInEffect)
             Log.d(TAG, "onStartSuccess: ")
-            appModel.isAdvertising.postValue(true)
+            appModel.setIsAdvertising(true)
         }
 
         override fun onStartFailure(errorCode: Int) {
@@ -228,6 +233,7 @@ class AdvertisementManager(
         }
     }
 
+    //region Public methods
     fun advertise(command: AdvertiseCommand) {
         gattServer = bluetoothManager.openGattServer(context, gattCallback)
         if (gattServer == null) {
@@ -253,7 +259,7 @@ class AdvertisementManager(
         gattServer = null
 
         advertiser?.stopAdvertising(scanCallback)
-        appModel.isAdvertising.postValue(false)
+        appModel.setIsAdvertising(false)
     }
 
     fun updateAdvertisedCharacteristics(characteristicData: MutableMap<UUID, ByteArray>) {
@@ -278,7 +284,9 @@ class AdvertisementManager(
             }
         }
     }
+    //endregion
 
+    //region private methods
     private fun createServices(device: Device): List<BluetoothGattService> {
         return device.services.map { service ->
             val gattService =
@@ -382,6 +390,7 @@ class AdvertisementManager(
     private fun getAdvertisedGattCharacteristics(): List<BluetoothGattCharacteristic>? {
         return gattServer?.services?.flatMap { it.characteristics }
     }
+    // endregion
 
     companion object {
         const val TAG = "AdvertisementManager"

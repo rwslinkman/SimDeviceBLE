@@ -5,7 +5,8 @@ enum class GrpcCall {
     StartAdvertisement,
     StopAdvertisement,
     ListAdvertisedCharacteristics,
-    UpdateCharacteristicValue
+    UpdateCharacteristicValue,
+    NotifyCharacteristic
 }
 
 interface GrpcEventListener {

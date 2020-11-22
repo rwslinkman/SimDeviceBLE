@@ -8,9 +8,10 @@ service SimDeviceBLE {
 
     rpc listAvailableSimDevices(google.protobuf.Empty) returns (ListAvailableSimDevicesResponse) {}
     rpc startAdvertisement(google.protobuf.Empty) returns (StartAdvertisementResponse) {}
-    rpc stopAdvertisement(google.protobuf.Empty) returns (StopAdvertisementResponse) {}
+    rpc stopAdvertisement(google.protobuf.Empty) returns (google.protobuf.Empty) {}
     rpc listAdvertisedCharacteristics(google.protobuf.Empty) returns (ListAdvertisedCharacteristicsResponse) {}
     rpc updateCharacteristicValue(UpdateCharacteristicValueRequest) returns (UpdateCharacteristicValueResponse) {}
+    rpc notifyCharacteristic(NotifyCharacteristicRequest) returns (google.protobuf.Empty) {}
 }
 
 // Data objects
@@ -34,24 +35,27 @@ message Characteristic {
 message ListAvailableSimDevicesResponse {
     repeated SimDevice availableDevices = 1;
 }
-
+message StartAdvertisementRequest{
+    string deviceName = 1;
+    bool connectable = 2;
+    bool advertiseDeviceName = 3;
+}
 message StartAdvertisementResponse {
-    bool advertisementStarted = 1;
+    string advertisementName = 1;
+    bool isConnectable = 2;
+    bool isAdvertisingDeviceName = 3;
+    string primaryServiceUUID = 4;
 }
-
-message StopAdvertisementResponse {
-    bool advertisementStopped = 1;
-}
-
 message ListAdvertisedCharacteristicsResponse {
     repeated Characteristic advertisedCharacteristics = 1;
 }
-
 message UpdateCharacteristicValueRequest {
     string uuid = 1;
     bytes updatedValue = 2;
 }
-
 message UpdateCharacteristicValueResponse {
     bool updateSucceeded = 1;
+}
+message NotifyCharacteristicRequest {
+    string uuid = 1;
 }
