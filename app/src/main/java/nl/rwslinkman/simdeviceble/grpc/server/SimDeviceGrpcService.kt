@@ -11,11 +11,15 @@ import nl.rwslinkman.simdeviceble.device.model.Device
  * Handles incoming calls from gRPC clients.
  * When unable to compile, see "<projectroot>/grpc/generate_java.sh" for code generation
  */
-class SimDeviceGrpcService : SimDeviceBLEGrpc.SimDeviceBLEImplBase() {
+class SimDeviceGrpcService(
+    val eventListener: GrpcEventListener?,
+    val actionHandler: GrpcActionHandler?
+) : SimDeviceBLEGrpc.SimDeviceBLEImplBase() {
     override fun listAvailableSimDevices(
         request: Empty?,
         responseObserver: StreamObserver<ListAvailableSimDevicesResponse>?
     ) {
+        eventListener?.onGrpcCallReceived(GrpcCall.ListAvailableSimDevices)
         Log.i(TAG, "incoming request: listAvailableSimDevices")
 
         val allSimDevices = AppModel.supportedDevices.map(::convert)
@@ -31,32 +35,37 @@ class SimDeviceGrpcService : SimDeviceBLEGrpc.SimDeviceBLEImplBase() {
         request: Empty?,
         responseObserver: StreamObserver<StartAdvertisementResponse>?
     ) {
-        super.startAdvertisement(request, responseObserver)
+        eventListener?.onGrpcCallReceived(GrpcCall.StartAdvertisement)
         Log.i(TAG, "incoming request: startAdvertisement")
+        super.startAdvertisement(request, responseObserver)
+
     }
 
     override fun stopAdvertisement(
         request: Empty?,
         responseObserver: StreamObserver<StopAdvertisementResponse>?
     ) {
-        super.stopAdvertisement(request, responseObserver)
+        eventListener?.onGrpcCallReceived(GrpcCall.StopAdvertisement)
         Log.i(TAG, "incoming request: stopAdvertisement")
+        super.stopAdvertisement(request, responseObserver)
     }
 
     override fun listAdvertisedCharacteristics(
         request: Empty?,
         responseObserver: StreamObserver<ListAdvertisedCharacteristicsResponse>?
     ) {
-        super.listAdvertisedCharacteristics(request, responseObserver)
+        eventListener?.onGrpcCallReceived(GrpcCall.ListAdvertisedCharacteristics)
         Log.i(TAG, "incoming request: listAdvertisedCharacteristics")
+        super.listAdvertisedCharacteristics(request, responseObserver)
     }
 
     override fun updateCharacteristicValue(
         request: UpdateCharacteristicValueRequest?,
         responseObserver: StreamObserver<UpdateCharacteristicValueResponse>?
     ) {
-        super.updateCharacteristicValue(request, responseObserver)
+        eventListener?.onGrpcCallReceived(GrpcCall.UpdateCharacteristicValue)
         Log.i(TAG, "incoming request: updateCharacteristicValue")
+        super.updateCharacteristicValue(request, responseObserver)
     }
 
     companion object {
