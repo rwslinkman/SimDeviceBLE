@@ -7,10 +7,10 @@ option java_multiple_files = true;
 service SimDeviceBLE {
 
     rpc listAvailableSimDevices(google.protobuf.Empty) returns (ListAvailableSimDevicesResponse) {}
-    rpc startAdvertisement(google.protobuf.Empty) returns (StartAdvertisementResponse) {}
+    rpc startAdvertisement(StartAdvertisementRequest) returns (StartAdvertisementResponse) {}
     rpc stopAdvertisement(google.protobuf.Empty) returns (google.protobuf.Empty) {}
     rpc listAdvertisedCharacteristics(google.protobuf.Empty) returns (ListAdvertisedCharacteristicsResponse) {}
-    rpc updateCharacteristicValue(UpdateCharacteristicValueRequest) returns (UpdateCharacteristicValueResponse) {}
+    rpc updateCharacteristicValue(UpdateCharacteristicValueRequest) returns (google.protobuf.Empty) {}
     rpc notifyCharacteristic(NotifyCharacteristicRequest) returns (google.protobuf.Empty) {}
 }
 
@@ -52,9 +52,6 @@ message ListAdvertisedCharacteristicsResponse {
 message UpdateCharacteristicValueRequest {
     string uuid = 1;
     bytes updatedValue = 2;
-}
-message UpdateCharacteristicValueResponse {
-    bool updateSucceeded = 1;
 }
 message NotifyCharacteristicRequest {
     string uuid = 1;

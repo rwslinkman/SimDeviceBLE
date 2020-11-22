@@ -3,8 +3,6 @@ package nl.rwslinkman.simdeviceble.grpc.server
 import android.util.Log
 import com.google.protobuf.Empty
 import io.grpc.stub.StreamObserver
-import nl.rwslinkman.simdeviceble.device.model.Characteristic
-import nl.rwslinkman.simdeviceble.device.model.Device
 
 /**
  * class SimDeviceGrpcService
@@ -32,13 +30,30 @@ class SimDeviceGrpcService(
     }
 
     override fun startAdvertisement(
-        request: Empty?,
+        request: StartAdvertisementRequest?,
         responseObserver: StreamObserver<StartAdvertisementResponse>?
     ) {
         eventListener?.onGrpcCallReceived(GrpcCall.StartAdvertisement)
         Log.i(TAG, "incoming request: startAdvertisement")
-        super.startAdvertisement(request, responseObserver)
 
+        try {
+            val deviceName = request?.deviceName
+            val connectable = request?.connectable
+            val advertiseDeviceName = request?.advertiseDeviceName
+
+            val command = AdvertisementStartCommand(deviceName, connectable, advertiseDeviceName)
+            val advertisementData = actionHandler.startAdvertisement(command)
+
+            val responseBuilder = StartAdvertisementResponse.newBuilder()
+                .setAdvertisementName(advertisementData.advertisementName)
+                .setIsConnectable(advertisementData.isConnectable)
+                .setIsAdvertisingDeviceName(advertisementData.isAdvertisingDeviceName)
+                .setPrimaryServiceUUID(advertisementData.primaryServiceUUID.toString())
+            responseObserver?.onNext(responseBuilder.build())
+            responseObserver?.onCompleted()
+        } catch (t: Throwable) {
+            responseObserver?.onError(t)
+        }
     }
 
     override fun stopAdvertisement(
@@ -47,7 +62,16 @@ class SimDeviceGrpcService(
     ) {
         eventListener?.onGrpcCallReceived(GrpcCall.StopAdvertisement)
         Log.i(TAG, "incoming request: stopAdvertisement")
-        super.stopAdvertisement(request, responseObserver)
+
+        try {
+            actionHandler.stopAdvertisement()
+
+            val responseBuilder = Empty.newBuilder()
+            responseObserver?.onNext(responseBuilder.build())
+            responseObserver?.onCompleted()
+        } catch (t: Throwable) {
+            responseObserver?.onError(t)
+        }
     }
 
     override fun listAdvertisedCharacteristics(
@@ -56,16 +80,40 @@ class SimDeviceGrpcService(
     ) {
         eventListener?.onGrpcCallReceived(GrpcCall.ListAdvertisedCharacteristics)
         Log.i(TAG, "incoming request: listAdvertisedCharacteristics")
-        super.listAdvertisedCharacteristics(request, responseObserver)
+
+        try {
+            val characteristics: List<Characteristic> =
+                actionHandler.listAdvertisedCharacteristics()
+
+            val responseBuilder = ListAdvertisedCharacteristicsResponse.newBuilder()
+            characteristics.forEach {
+                responseBuilder.addAdvertisedCharacteristics(it)
+            }
+
+            responseObserver?.onNext(responseBuilder.build())
+            responseObserver?.onCompleted()
+        } catch (t: Throwable) {
+            responseObserver?.onError(t)
+        }
     }
 
     override fun updateCharacteristicValue(
         request: UpdateCharacteristicValueRequest?,
-        responseObserver: StreamObserver<UpdateCharacteristicValueResponse>?
+        responseObserver: StreamObserver<Empty>?
     ) {
         eventListener?.onGrpcCallReceived(GrpcCall.UpdateCharacteristicValue)
         Log.i(TAG, "incoming request: updateCharacteristicValue")
-        super.updateCharacteristicValue(request, responseObserver)
+
+        try {
+            val uuid = request?.uuid
+            val updateValue = request?.updatedValue?.toByteArray()
+            actionHandler.updateCharacteristicValue(uuid, updateValue)
+
+            responseObserver?.onNext(Empty.newBuilder().build())
+            responseObserver?.onCompleted()
+        } catch (t: Throwable) {
+            responseObserver?.onError(t)
+        }
     }
 
     override fun notifyCharacteristic(
@@ -74,40 +122,21 @@ class SimDeviceGrpcService(
     ) {
         eventListener?.onGrpcCallReceived(GrpcCall.NotifyCharacteristic)
         Log.i(TAG, "incoming request: notifyCharacteristic")
-        super.notifyCharacteristic(request, responseObserver)
+
+        try {
+            val uuid = request?.uuid
+
+            actionHandler.notifyCharacteristic(uuid)
+
+            val responseBuilder = Empty.newBuilder()
+            responseObserver?.onNext(responseBuilder.build())
+            responseObserver?.onCompleted()
+        } catch (t: Throwable) {
+            responseObserver?.onError(t)
+        }
     }
 
     companion object {
         const val TAG = "SimDeviceGrpcService"
     }
-
-//    private fun convert(device: Device): SimDevice {
-//        val simDeviceBuilder = SimDevice.newBuilder()
-//            .setName(device.name)
-//            .setPrimaryServiceUUID(device.primaryServiceUuid.toString())
-//
-//        device.services.map(::convertService).apply {
-//            simDeviceBuilder.addAllServices(this)
-//        }
-//        return simDeviceBuilder.build()
-//    }
-
-//    private fun convertService(service: nl.rwslinkman.simdeviceble.device.model.Service) : Service {
-//        val simServiceBuilder = Service.newBuilder()
-//            .setName(service.name)
-//            .setUuid(service.uuid.toString())
-//
-//        service.characteristics.map(::convertChar).apply {
-//            simServiceBuilder.addAllCharacteristics(this)
-//        }
-//
-//        return simServiceBuilder.build()
-//    }
-
-//    private fun convertChar(characteristic: Characteristic): nl.rwslinkman.simdeviceble.grpc.server.Characteristic {
-//        val simCharBuilder = nl.rwslinkman.simdeviceble.grpc.server.Characteristic.newBuilder()
-//            .setName(characteristic.name)
-//            .setUuid(characteristic.uuid.toString())
-//        return simCharBuilder.build()
-//    }
 }

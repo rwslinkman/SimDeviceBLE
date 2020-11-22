@@ -98,12 +98,7 @@ class MainActivity : AppCompatActivity() {
         appModel.bluetoothSupported.postValue(bluetoothAdapter != null)
 
         bluetoothAdapter?.let {
-            advManager =
-                AdvertisementManager(
-                    this,
-                    it,
-                    appModel
-                )
+            advManager = AdvertisementManager(this, it, appModel)
 
             appModel.bluetoothEnabled.postValue(it.isEnabled)
             appModel.bluetoothAdvertisingSupported.postValue(it.isMultipleAdvertisementSupported)

@@ -16,8 +16,8 @@ class GrpcServer(private val port: Int = 8765) {
 
         override fun startAdvertisement(command: AdvertisementStartCommand): AdvertisementData {
             return AdvertisementData(
-                isAdvertising = false,
                 advertisementName = "n/a",
+                primaryServiceUUID = UUID.randomUUID(),
                 isConnectable = false,
                 isAdvertisingDeviceName = false
             )
@@ -27,15 +27,19 @@ class GrpcServer(private val port: Int = 8765) {
             // NOP
         }
 
-        override fun getCharacteristicValue(uuid: UUID): ByteArray {
+        override fun listAdvertisedCharacteristics(): List<Characteristic> {
+            return emptyList()
+        }
+
+        override fun getCharacteristicValue(uuid: String): ByteArray {
             return byteArrayOf()
         }
 
-        override fun updateCharacteristicValue(uuid: UUID, data: ByteArray) {
+        override fun updateCharacteristicValue(uuid: String?, data: ByteArray?) {
             // NOP
         }
 
-        override fun notifyCharacteristic(uuid: UUID) {
+        override fun notifyCharacteristic(uuid: String?) {
             // NOP
         }
     }
