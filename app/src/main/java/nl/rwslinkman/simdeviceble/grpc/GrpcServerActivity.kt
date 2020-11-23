@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import nl.rwslinkman.simdeviceble.R
 import nl.rwslinkman.simdeviceble.bluetooth.AdvertisementManager
+import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.grpc.server.GrpcCall
 import nl.rwslinkman.simdeviceble.grpc.server.GrpcEventListener
 import nl.rwslinkman.simdeviceble.grpc.server.GrpcServer
@@ -15,14 +16,13 @@ import nl.rwslinkman.simdeviceble.grpc.server.GrpcServer
 class GrpcServerActivity : AppCompatActivity() {
     // grpc
     private val grpcServer = GrpcServer(8910)
-    private val dataModel = GrpcDataModel()
+    private lateinit var dataModel: GrpcDataModel
 
     // ble
     private var isBluetoothSupported = false
     private var bluetoothAdapter: BluetoothAdapter? = null
-    private var advManager: AdvertisementManager? = null
-    private var advertisementName: String? = null
-    private var isAdvertisingSupported: Boolean = false
+    private lateinit var advManager: AdvertisementManager
+    private lateinit var hostData: HostData
 
     // ui
     private lateinit var statusSubtitle: TextView
@@ -43,12 +43,25 @@ class GrpcServerActivity : AppCompatActivity() {
             val eventDetails = "Received call: ${event.name}"
             addEventToView(eventDetails)
         }
+    }
 
-        private fun addEventToView(eventDetails: String) {
-            runOnUiThread {
-                grpcEventAdapter.addGrpcEvent(eventDetails)
-                grpcEventAdapter.notifyDataSetChanged()
-            }
+    private val btDelegate = object : AdvertisementManager.Listener {
+        override fun updateDataContainer(characteristic: Characteristic, data: ByteArray, isInitialValue: Boolean) {
+            if(isInitialValue) return
+            addEventToView("Value of ${characteristic.name} was updated")
+        }
+
+        override fun setIsAdvertising(isAdvertising: Boolean) {
+            val event = if(isAdvertising) "started" else "stopped"
+            addEventToView("SimDeviceBLE has ${event} advertising")
+        }
+
+        override fun onDeviceConnected(deviceAddress: String) {
+            addEventToView("Device $deviceAddress has connected to SimDeviceBLE")
+        }
+
+        override fun onDeviceDisconnected(deviceAddress: String) {
+            addEventToView("Device $deviceAddress has disconnected from SimDeviceBLE")
         }
     }
 
@@ -77,6 +90,7 @@ class GrpcServerActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         grpcServer.stop()
+        advManager.stop()
     }
 
     private fun setupBluetooth() {
@@ -84,10 +98,17 @@ class GrpcServerActivity : AppCompatActivity() {
         isBluetoothSupported = bluetoothAdapter != null
 
         bluetoothAdapter?.let {
-            advManager = AdvertisementManager(this, it, dataModel)
+            advManager = AdvertisementManager(this, it, btDelegate)
 
-            isAdvertisingSupported = it.isMultipleAdvertisementSupported
-            advertisementName = it.name
+            hostData = HostData(it.name, it.isMultipleAdvertisementSupported)
+            dataModel = GrpcDataModel(advManager, hostData)
+        }
+    }
+
+    private fun addEventToView(eventDetails: String) {
+        runOnUiThread {
+            grpcEventAdapter.addGrpcEvent(eventDetails)
+            grpcEventAdapter.notifyDataSetChanged()
         }
     }
 }

@@ -11,7 +11,6 @@ interface GrpcActionHandler {
     fun startAdvertisement(command: AdvertisementStartCommand): AdvertisementData
     fun stopAdvertisement()
     fun listAdvertisedCharacteristics(): List<Characteristic>
-    fun getCharacteristicValue(uuid: String): ByteArray
     fun updateCharacteristicValue(uuid: String?, data: ByteArray?)
     fun notifyCharacteristic(uuid: String?)
 }

@@ -64,7 +64,7 @@ class AppModel: ViewModel(), AdvertisementManager.Listener {
         connectedDevices.postValue(_connDevices.toList())
     }
 
-    override fun updateDataContainer(characteristic: Characteristic, data: ByteArray) {
+    override fun updateDataContainer(characteristic: Characteristic, data: ByteArray, isInitialValue: Boolean) {
         _dataContainer[characteristic.uuid] = data
         postDataContainer()
     }
@@ -75,7 +75,7 @@ class AppModel: ViewModel(), AdvertisementManager.Listener {
 
     fun updateCharacteristicValue(characteristic: Characteristic, value: String) {
         val byteValue: ByteArray = characteristic.convertToBytes(value)
-        updateDataContainer(characteristic, byteValue)
+        updateDataContainer(characteristic, byteValue, false)
     }
 
     fun sendCharacteristicNotification(characteristic: Characteristic) {

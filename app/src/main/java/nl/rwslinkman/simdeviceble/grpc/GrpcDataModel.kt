@@ -1,63 +1,69 @@
 package nl.rwslinkman.simdeviceble.grpc
 
+import com.google.protobuf.ByteString
 import nl.rwslinkman.simdeviceble.AppModel
+import nl.rwslinkman.simdeviceble.bluetooth.AdvertiseCommand
 import nl.rwslinkman.simdeviceble.bluetooth.AdvertisementManager
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Device
 import nl.rwslinkman.simdeviceble.grpc.server.*
-import java.lang.IllegalArgumentException
 import java.util.*
 
-// TODO: Implement data handling
-class GrpcDataModel: AdvertisementManager.Listener, GrpcActionHandler {
-    private val dataContainer: MutableMap<UUID, ByteArray> = mutableMapOf()
-
-    override fun updateDataContainer(characteristic: Characteristic, data: ByteArray) {
-        // TODO
-    }
-
-    override fun setIsAdvertising(isAdvertising: Boolean) {
-        // TODO
-    }
-
-    override fun onDeviceConnected(deviceAddress: String) {
-        // TODO
-    }
-
-    override fun onDeviceDisconnected(deviceAddress: String) {
-        // TODO
-    }
+class GrpcDataModel(private val advertisementManager: AdvertisementManager, private val hostData: HostData) :
+    GrpcActionHandler {
 
     override fun getSupportedDevices(): List<SimDevice> {
-        val devices: List<Device> = AppModel.supportedDevices
-        return devices.map(::convertDevice)
+        return allDevices().map(::convertDevice)
     }
 
     override fun startAdvertisement(command: AdvertisementStartCommand): AdvertisementData {
-        // TODO
-//        throw IllegalArgumentException() // test
-        return AdvertisementData("GRPCDevice", UUID.randomUUID(), false, false)
+        val device: Device = allDevices().find { it.name == command.device }
+            ?: throw IllegalArgumentException("Device '${command.device}' is not supported")
+
+        val includesDeviceName = command.advertiseDeviceName ?: true
+        val isConnectable = command.connectable ?: true
+        val startCommand = AdvertiseCommand(
+            device,
+            includesDeviceName,
+            isConnectable
+        )
+        advertisementManager.advertise(startCommand)
+        return AdvertisementData(
+            hostData.advertisementName,
+            device.primaryServiceUuid,
+            isConnectable,
+            includesDeviceName
+        )
     }
 
     override fun stopAdvertisement() {
-        // TODO
+        advertisementManager.stop()
     }
 
     override fun listAdvertisedCharacteristics(): List<nl.rwslinkman.simdeviceble.grpc.server.Characteristic> {
-        return emptyList()
-    }
-
-    override fun getCharacteristicValue(uuid: String): ByteArray {
-        // TODO
-        return byteArrayOf()
+        val data = advertisementManager.getAdvertisedCharacteristicValues()
+        return data.map {
+            val byteString = ByteString.copyFrom(it.value)
+            val builder = nl.rwslinkman.simdeviceble.grpc.server.Characteristic
+                .newBuilder()
+                .setUuid(it.key.uuid.toString())
+                .setName(it.key.name)
+                .setCurrentValue(byteString)
+            builder.build()
+        }
     }
 
     override fun updateCharacteristicValue(uuid: String?, data: ByteArray?) {
-        // TODO
+        val charUUID: UUID = UUID.fromString(uuid ?: throw IllegalArgumentException("Property 'uuid' is required"))
+        val updateData: ByteArray = data ?: throw IllegalArgumentException("Property 'data' is required")
+
+        val charMap = mutableMapOf(Pair(charUUID, updateData))
+        advertisementManager.updateAdvertisedCharacteristics(charMap)
     }
 
     override fun notifyCharacteristic(uuid: String?) {
-        // TODO
+        val charUUID = UUID.fromString(uuid ?: throw IllegalArgumentException("Property 'uuid' is required"))
+        advertisementManager.sendNotificationToConnectedDevices(charUUID)
     }
 
     private fun convertDevice(device: Device): SimDevice {
@@ -71,7 +77,7 @@ class GrpcDataModel: AdvertisementManager.Listener, GrpcActionHandler {
         return simDeviceBuilder.build()
     }
 
-    private fun convertService(service: nl.rwslinkman.simdeviceble.device.model.Service) : Service {
+    private fun convertService(service: nl.rwslinkman.simdeviceble.device.model.Service): Service {
         val simServiceBuilder = Service.newBuilder()
             .setName(service.name)
             .setUuid(service.uuid.toString())
@@ -89,4 +95,6 @@ class GrpcDataModel: AdvertisementManager.Listener, GrpcActionHandler {
             .setUuid(characteristic.uuid.toString())
         return simCharBuilder.build()
     }
+
+    private fun allDevices(): List<Device> = AppModel.supportedDevices
 }

@@ -14,10 +14,10 @@ import java.util.*
 class AdvertisementManager(
     private val context: Context,
     bluetoothAdapter: BluetoothAdapter,
-    private val appModel: Listener
+    var listener: Listener? = null
 ) {
     interface Listener {
-        fun updateDataContainer(characteristic: Characteristic, data: ByteArray)
+        fun updateDataContainer(characteristic: Characteristic, data: ByteArray, isInitialValue: Boolean)
         fun setIsAdvertising(isAdvertising: Boolean)
         fun onDeviceConnected(deviceAddress: String)
         fun onDeviceDisconnected(deviceAddress: String)
@@ -115,7 +115,7 @@ class AdvertisementManager(
                 value?.let {
                     characteristic?.value = value
                     if (status == BluetoothGatt.GATT_SUCCESS) {
-                        appModel.updateDataContainer(charModel, it)
+                        listener?.updateDataContainer(charModel, it, false)
                     }
                 }
             }
@@ -224,7 +224,7 @@ class AdvertisementManager(
         override fun onStartSuccess(settingsInEffect: AdvertiseSettings?) {
             super.onStartSuccess(settingsInEffect)
             Log.d(TAG, "onStartSuccess: ")
-            appModel.setIsAdvertising(true)
+            listener?.setIsAdvertising(true)
         }
 
         override fun onStartFailure(errorCode: Int) {
@@ -259,7 +259,7 @@ class AdvertisementManager(
         gattServer = null
 
         advertiser?.stopAdvertising(scanCallback)
-        appModel.setIsAdvertising(false)
+        listener?.setIsAdvertising(false)
     }
 
     fun updateAdvertisedCharacteristics(characteristicData: MutableMap<UUID, ByteArray>) {
@@ -272,6 +272,14 @@ class AdvertisementManager(
         }
     }
 
+    fun sendNotificationToConnectedDevices(uuid: UUID) {
+        val characteristic = advertiseCommand.device.getCharacteristic(uuid)
+        characteristic?.let {
+            sendNotificationToConnectedDevices(it)
+        }
+    }
+
+
     fun sendNotificationToConnectedDevices(characteristic: Characteristic) {
         val indicate = characteristic.isIndicate
         val notifyMe: BluetoothGattCharacteristic? = getAdvertisedGattCharacteristics()?.first {
@@ -283,6 +291,22 @@ class AdvertisementManager(
                 gattServer?.notifyCharacteristicChanged(device, it, indicate)
             }
         }
+    }
+
+    fun getAdvertisedCharacteristicValues(): Map<Characteristic, ByteArray> {
+        val device = advertiseCommand.device
+        val result = mutableMapOf<Characteristic, ByteArray>()
+        getAdvertisedGattCharacteristics()?.forEach { btChar ->
+            val char = device.getCharacteristic(btChar.uuid)
+            char?.let {
+                var btValue = byteArrayOf()
+                if(btChar.value !== null) {
+                    btValue = btChar.value
+                }
+                result[char] = btValue
+            }
+        }
+        return result
     }
     //endregion
 
@@ -310,7 +334,7 @@ class AdvertisementManager(
                     val initialValue: ByteArray? = it.initialValue
                     initialValue?.let { initVal ->
                         gattCharacteristic.value = initialValue
-                        appModel.updateDataContainer(it, initVal)
+                        listener?.updateDataContainer(it, initVal, true)
                     }
 
                     gattCharacteristic
@@ -379,12 +403,12 @@ class AdvertisementManager(
 
     private fun onDeviceConnected(device: BluetoothDevice) {
         connectedDevices[device.address] = device
-        appModel.onDeviceConnected(device.address)
+        listener?.onDeviceConnected(device.address)
     }
 
     private fun onDeviceDisconnected(device: BluetoothDevice) {
         connectedDevices.remove(device.address)
-        appModel.onDeviceDisconnected(device.address)
+        listener?.onDeviceDisconnected(device.address)
     }
 
     private fun getAdvertisedGattCharacteristics(): List<BluetoothGattCharacteristic>? {
