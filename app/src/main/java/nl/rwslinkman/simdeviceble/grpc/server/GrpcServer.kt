@@ -31,10 +31,6 @@ class GrpcServer(private val port: Int = 8765) {
             return emptyList()
         }
 
-        override fun getCharacteristicValue(uuid: String): ByteArray {
-            return byteArrayOf()
-        }
-
         override fun updateCharacteristicValue(uuid: String?, data: ByteArray?) {
             // NOP
         }

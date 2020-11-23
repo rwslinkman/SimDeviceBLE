@@ -15,7 +15,8 @@ import nl.rwslinkman.simdeviceble.grpc.server.GrpcServer
 
 class GrpcServerActivity : AppCompatActivity() {
     // grpc
-    private val grpcServer = GrpcServer(8910)
+    private val grpcPort = 8910
+    private val grpcServer = GrpcServer(grpcPort)
     private lateinit var dataModel: GrpcDataModel
 
     // ble
@@ -30,7 +31,7 @@ class GrpcServerActivity : AppCompatActivity() {
 
     private val eventListener = object : GrpcEventListener {
         override fun onGrpcServerStarted() {
-            statusSubtitle.text = getText(R.string.grpc_server_running)
+            statusSubtitle.text = getString(R.string.grpc_server_running, grpcPort)
             addEventToView("gRPC server has started")
         }
 
