@@ -2,8 +2,8 @@
 Simulate a BLE device using this Android app
 
 SimDeviceBLE allows developers to simulate Bluetooth devices with multiple GATT Services.   
-This *app* allows full configuration of the BLE advertisement data and shows the amount of connected devices.   
-The simulated device and the advertised data can be manipulated using the app UI or the *gRPC* interface.
+This **app** allows full configuration of the BLE advertisement data and shows the amount of connected devices.   
+The simulated device and the advertised data can be manipulated using the app UI or the **gRPC** interface.
 
 Feel free to import the `app` module into your Android Studio project to simulate your own BLE peripherals.      
 Contributing the proprietary devices, services and characteristics is appreciated but not required.     
