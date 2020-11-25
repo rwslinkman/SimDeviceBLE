@@ -3,6 +3,8 @@ package nl.rwslinkman.simdeviceble
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -15,7 +17,9 @@ import nl.rwslinkman.simdeviceble.bluetooth.AdvertisementManager
 import nl.rwslinkman.simdeviceble.bluetooth.BluetoothDelegate
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Device
+import nl.rwslinkman.simdeviceble.grpc.GrpcServerActivity
 import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -74,6 +78,20 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.header_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == R.id.menu_item_grpc) {
+            val intent = Intent(this, GrpcServerActivity::class.java)
+            startActivity(intent)
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun startBluetoothIntent() {
         val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
@@ -98,12 +116,7 @@ class MainActivity : AppCompatActivity() {
         appModel.bluetoothSupported.postValue(bluetoothAdapter != null)
 
         bluetoothAdapter?.let {
-            advManager =
-                AdvertisementManager(
-                    this,
-                    it,
-                    appModel
-                )
+            advManager = AdvertisementManager(this, it, appModel)
 
             appModel.bluetoothEnabled.postValue(it.isEnabled)
             appModel.bluetoothAdvertisingSupported.postValue(it.isMultipleAdvertisementSupported)

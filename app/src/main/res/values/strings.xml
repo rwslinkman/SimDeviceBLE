@@ -5,4 +5,7 @@
     <string name="title_servicedata">Service Data</string>
     <string name="sources_link_label">Source code is available on <a href="">Github</a></string>
     <string name="developer_link_label">Created by <a href="">Rick Slinkman</a> for developers</string>
+    <string name="grpc_server_running">Server is running on port %1$d...</string>
+    <string name="grpc_server_idle">Server is idle...</string>
+    <string name="menu_text_grpc">gRPC Server</string>
 </resources>

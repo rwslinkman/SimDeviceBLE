@@ -2,6 +2,7 @@ package nl.rwslinkman.simdeviceble
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import nl.rwslinkman.simdeviceble.bluetooth.AdvertisementManager
 import nl.rwslinkman.simdeviceble.bluetooth.BluetoothDelegate
 import nl.rwslinkman.simdeviceble.device.Clock
 import nl.rwslinkman.simdeviceble.device.EarThermometer
@@ -10,7 +11,7 @@ import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Device
 import java.util.*
 
-class AppModel: ViewModel() {
+class AppModel: ViewModel(), AdvertisementManager.Listener {
 
     // Data for Bluetooth UI
     val bluetoothSupported: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -53,24 +54,28 @@ class AppModel: ViewModel() {
         _dataContainer.clear()
     }
 
-    fun onDeviceConnected(device: String) {
-        _connDevices.add(device)
+    override fun onDeviceConnected(deviceAddress: String) {
+        _connDevices.add(deviceAddress)
         connectedDevices.postValue(_connDevices.toList())
     }
 
-    fun onDeviceDisconnected(device: String) {
-        _connDevices.remove(device)
+    override fun onDeviceDisconnected(deviceAddress: String) {
+        _connDevices.remove(deviceAddress)
         connectedDevices.postValue(_connDevices.toList())
     }
 
-    fun updateDataContainer(characteristic: Characteristic, charValue: ByteArray) {
-        _dataContainer[characteristic.uuid] = charValue
+    override fun updateDataContainer(characteristic: Characteristic, data: ByteArray, isInitialValue: Boolean) {
+        _dataContainer[characteristic.uuid] = data
         postDataContainer()
+    }
+
+    override fun setIsAdvertising(isAdvertising: Boolean) {
+        this.isAdvertising.postValue(isAdvertising)
     }
 
     fun updateCharacteristicValue(characteristic: Characteristic, value: String) {
         val byteValue: ByteArray = characteristic.convertToBytes(value)
-        updateDataContainer(characteristic, byteValue)
+        updateDataContainer(characteristic, byteValue, false)
     }
 
     fun sendCharacteristicNotification(characteristic: Characteristic) {

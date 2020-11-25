@@ -1,0 +1,58 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+option java_package = "nl.rwslinkman.simdeviceble.grpc.server";
+option java_multiple_files = true;
+
+service SimDeviceBLE {
+
+    rpc listAvailableSimDevices(google.protobuf.Empty) returns (ListAvailableSimDevicesResponse) {}
+    rpc startAdvertisement(StartAdvertisementRequest) returns (StartAdvertisementResponse) {}
+    rpc stopAdvertisement(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+    rpc listAdvertisedCharacteristics(google.protobuf.Empty) returns (ListAdvertisedCharacteristicsResponse) {}
+    rpc updateCharacteristicValue(UpdateCharacteristicValueRequest) returns (google.protobuf.Empty) {}
+    rpc notifyCharacteristic(NotifyCharacteristicRequest) returns (google.protobuf.Empty) {}
+}
+
+// Data objects
+message SimDevice {
+    string name = 1;
+    string primaryServiceUUID = 2;
+    repeated Service services = 3;
+}
+message Service {
+    string uuid = 1;
+    string name = 2;
+    repeated Characteristic characteristics = 3;
+}
+message Characteristic {
+    string uuid = 1;
+    string name = 2;
+    bytes currentValue = 3;
+}
+
+// gRPC request/response messages
+message ListAvailableSimDevicesResponse {
+    repeated SimDevice availableDevices = 1;
+}
+message StartAdvertisementRequest{
+    string deviceName = 1;
+    bool connectable = 2;
+    bool advertiseDeviceName = 3;
+}
+message StartAdvertisementResponse {
+    string advertisementName = 1;
+    bool isConnectable = 2;
+    bool isAdvertisingDeviceName = 3;
+    string primaryServiceUUID = 4;
+}
+message ListAdvertisedCharacteristicsResponse {
+    repeated Characteristic advertisedCharacteristics = 1;
+}
+message UpdateCharacteristicValueRequest {
+    string uuid = 1;
+    bytes updatedValue = 2;
+}
+message NotifyCharacteristicRequest {
+    string uuid = 1;
+}
