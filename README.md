@@ -2,13 +2,13 @@
 Simulate a BLE device using this Android app
 
 SimDeviceBLE allows developers to simulate Bluetooth devices with multiple GATT Services.   
-It allows full configuration of the BLE advertisement data and shows the amount of connected devices.
-The simulated device and the advertised data can be manipulated using the app UI or the gRPC interface.   
+This *app* allows full configuration of the BLE advertisement data and shows the amount of connected devices.   
+The simulated device and the advertised data can be manipulated using the app UI or the *gRPC* interface.
 
 Feel free to import the `app` module into your Android Studio project to simulate your own BLE peripherals.      
 Contributing the proprietary devices, services and characteristics is appreciated but not required.     
 
-## Usage
+## App
 Checkout the project and open it with Android Studio.   
 Run the `app` on your Android phone.   
 
@@ -26,10 +26,11 @@ Services and characteristics are introspected and Views are created dynamically.
 ![Service Data screen manipulates data of all advertised characteristics](docs/image_data_fragment.jpg)
 
 ## gRPC
-SimDeviceBLE defines a gRPC interface to take control of the BLE device.   
-Generate a client in your preferred language to interact with the gRPC server in the app.   
+SimDeviceBLE defines a [gRPC](https://grpc.io/) interface to take control of the BLE device.   
+Generate a client [in your preferred language](https://grpc.io/docs/languages/) to interact with the gRPC server in the app.   
 All devices supported in the app can be advertised with a simple command.   
-Manipulate the advertised characteristic data to match your use case or test scenario.   
+Update the advertised characteristic data to match your use case or test scenario.   
+To notify all connected devices of an updated characteristic in SimDeviceBLE, call the associated `rpc`.
 
 SimDeviceBLE has a `GrpcServerActivity` that can be used in an easy way.   
 It is available via the options menu in the app.      
