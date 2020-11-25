@@ -3,6 +3,7 @@ Simulate a BLE device using this Android app
 
 SimDeviceBLE allows developers to simulate Bluetooth devices with multiple GATT Services.   
 It allows full configuration of the BLE advertisement data and shows the amount of connected devices.
+The simulated device and the advertised data can be manipulated using the app UI or the gRPC interface.   
 
 Feel free to import the `app` module into your Android Studio project to simulate your own BLE peripherals.      
 Contributing the proprietary devices, services and characteristics is appreciated but not required.     
@@ -23,6 +24,33 @@ Services and characteristics are introspected and Views are created dynamically.
 
 ![Home screen allows for configuration of Advertisement data](docs/image_home_fragment.jpg)
 ![Service Data screen manipulates data of all advertised characteristics](docs/image_data_fragment.jpg)
+
+## gRPC
+SimDeviceBLE defines a gRPC interface to take control of the BLE device.   
+Generate a client in your preferred language to interact with the gRPC server in the app.   
+All devices supported in the app can be advertised with a simple command.   
+Manipulate the advertised characteristic data to match your use case or test scenario.   
+
+SimDeviceBLE has a `GrpcServerActivity` that can be used in an easy way.   
+It is available via the options menu in the app.      
+
+For usage in automation, please follow these steps:   
+- Install the SimDeviceBLE app on an Android phone and connect to a PC using USB.   
+- Run command `adb forward tcp:8910 tcp:8910`   
+- Run command `adb shell am start -n nl.rwslinkman.simdeviceble/.grpc.GrpcServerActivity`   
+
+```protobuf
+service SimDeviceBLE {
+
+    rpc listAvailableSimDevices(google.protobuf.Empty) returns (ListAvailableSimDevicesResponse) {}
+    rpc startAdvertisement(StartAdvertisementRequest) returns (StartAdvertisementResponse) {}
+    rpc stopAdvertisement(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+    rpc listAdvertisedCharacteristics(google.protobuf.Empty) returns (ListAdvertisedCharacteristicsResponse) {}
+    rpc updateCharacteristicValue(UpdateCharacteristicValueRequest) returns (google.protobuf.Empty) {}
+    rpc notifyCharacteristic(NotifyCharacteristicRequest) returns (google.protobuf.Empty) {}
+}
+```
+Please refer to the `grpc/SimDeviceBLE.proto` file for the full specification of the gRPC interface.
 
 ## Contributing
 Please feel free to add any devices in the `nl.rwslinkman.simdeviceble.device` package.   
