@@ -7,7 +7,7 @@ import java.util.*
 
 class FirmwareRevisionCharacteristic: Characteristic {
     override val name: String
-        get() = "FirmwareRevisionCharacteristic"
+        get() = "FirmwareRevision"
     override val uuid: UUID
         get() = BluetoothUUID.fromSigNumber("2A26")
     override val type: Characteristic.Type

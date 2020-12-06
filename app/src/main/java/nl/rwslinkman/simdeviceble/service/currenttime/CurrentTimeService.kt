@@ -1,4 +1,4 @@
-package nl.rwslinkman.simdeviceble.service
+package nl.rwslinkman.simdeviceble.service.currenttime
 
 import nl.rwslinkman.simdeviceble.bluetooth.BluetoothUUID
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
@@ -13,7 +13,9 @@ class CurrentTimeService: Service {
         get() = SERVICE_UUID
 
     override val characteristics: List<Characteristic>
-        get() = listOf()
+        get() = listOf(
+            CurrentTimeCharacteristic()
+        )
 
     companion object {
         val SERVICE_UUID = BluetoothUUID.fromSigNumber("1805")

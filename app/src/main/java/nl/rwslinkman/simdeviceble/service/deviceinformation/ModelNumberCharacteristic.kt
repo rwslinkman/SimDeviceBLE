@@ -7,7 +7,7 @@ import java.util.*
 
 class ModelNumberCharacteristic: Characteristic {
     override val name: String
-        get() = "ModelNumberCharacteristic"
+        get() = "ModelNumber"
     override val uuid: UUID
         get() = BluetoothUUID.fromSigNumber("2A24")
     override val type: Characteristic.Type

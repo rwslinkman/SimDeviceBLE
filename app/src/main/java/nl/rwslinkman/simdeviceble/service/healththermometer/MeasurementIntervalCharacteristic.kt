@@ -7,9 +7,8 @@ import java.nio.ByteOrder
 import java.util.*
 import kotlin.math.pow
 
-
 /**
- * See [Measurement Interval](https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.measurement_interval.xml)
+ * Measurement Interval
  */
 class MeasurementIntervalCharacteristic: Characteristic {
     override val name: String

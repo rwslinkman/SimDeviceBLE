@@ -1,13 +1,12 @@
 package nl.rwslinkman.simdeviceble.service.healththermometer
 
 import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCharacteristic
-import android.text.Editable
+import nl.rwslinkman.simdeviceble.bluetooth.BluetoothBytesParser
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import java.util.*
 
 /**
- * See [Temperature Measurement](https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.temperature_measurement.xml)
+ * Temperature Measurement
  */
 class TemperatureMeasurementCharacteristic : Characteristic {
     override val name: String
@@ -17,7 +16,13 @@ class TemperatureMeasurementCharacteristic : Characteristic {
         get() = UUID.fromString("00002A1C-0000-1000-8000-00805f9b34fb")
 
     override val type: Characteristic.Type
-        get() = Characteristic.Type.Number
+        get() = Characteristic.Type.Decimal
+
+    override val isRead: Boolean
+        get() = true
+
+    override val isNotify: Boolean
+        get() = true
 
     override val isIndicate: Boolean
         get() = true
@@ -25,28 +30,37 @@ class TemperatureMeasurementCharacteristic : Characteristic {
     override val description: String?
         get() = TEMPERATURE_MEASUREMENT_DESCRIPTION
 
+    override val initialValue: ByteArray?
+        get() = convert(INITIAL_TEMPERATURE_MEASUREMENT_VALUE)
+
     override fun validateWrite(offset: Int, value: ByteArray?): Int {
-        // TODO
         return BluetoothGatt.GATT_SUCCESS
     }
 
     override fun convertToPresentable(value: ByteArray): String {
-        // TODO
-        return value.first().toInt().toString()
+        val parser = BluetoothBytesParser(value)
+        val temperature = parser.getFloatValue(TEMPERATURE_MEASUREMENT_VALUE_FORMAT)
+        return temperature.toString()
     }
 
     override fun convertToBytes(value: String): ByteArray {
-        return value.toByteArray()
+        val temperature: Float = value.toFloat()
+        return convert(temperature)
     }
 
     companion object {
-        private val TEMPERATURE_MEASUREMENT_VALUE_FORMAT = BluetoothGattCharacteristic.FORMAT_FLOAT
-        private val INITIAL_TEMPERATURE_MEASUREMENT_VALUE = 37.0f
-        private val EXPONENT_MASK = 0x7f800000
-        private val EXPONENT_SHIFT = 23
-        private val MANTISSA_MASK = 0x007fffff
-        private val MANTISSA_SHIFT = 0
-        private val TEMPERATURE_MEASUREMENT_DESCRIPTION = "This characteristic is used " +
-                    "to send a temperature measurement."
+        private const val TEMPERATURE_MEASUREMENT_VALUE_FORMAT = BluetoothBytesParser.FORMAT_FLOAT
+        private const val INITIAL_TEMPERATURE_MEASUREMENT_VALUE: Float = 37.0f
+        private const val EXPONENT_MASK = 0x7f800000
+        private const val EXPONENT_SHIFT = 23
+        private const val MANTISSA_MASK = 0x007fffff
+        private const val MANTISSA_SHIFT = 0
+        private const val TEMPERATURE_MEASUREMENT_DESCRIPTION = "This characteristic is used to send a temperature measurement."
+    }
+
+    private fun convert(value: Float): ByteArray {
+        val parser = BluetoothBytesParser()
+        parser.setFloatValue(value, 1)
+        return parser.value
     }
 }

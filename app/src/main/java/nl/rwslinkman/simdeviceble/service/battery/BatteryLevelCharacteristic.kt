@@ -1,6 +1,7 @@
 package nl.rwslinkman.simdeviceble.service.battery
 
 import android.bluetooth.BluetoothGatt
+import nl.rwslinkman.simdeviceble.bluetooth.BluetoothBytesParser
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import java.util.*
 
@@ -24,7 +25,7 @@ class BatteryLevelCharacteristic: Characteristic {
         get() = BATTERY_LEVEL_DESCRIPTION
 
     override val initialValue: ByteArray?
-        get() = convertToBytes(INITIAL_BATTERY_LEVEL.toString())
+        get() = convert(INITIAL_BATTERY_LEVEL)
 
     override fun validateWrite(offset: Int, value: ByteArray?): Int {
         value?.let {
@@ -40,15 +41,14 @@ class BatteryLevelCharacteristic: Characteristic {
     }
 
     override fun convertToPresentable(value: ByteArray): String {
-        val batteryValue = value.first().toInt()
+        val parser = BluetoothBytesParser(value)
+        val batteryValue = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT8)
         return "$batteryValue%"
     }
 
     override fun convertToBytes(value: String): ByteArray {
         val batteryValue: Int = value.toInt()
-        val retVal = ByteArray(1)
-        retVal[0] = batteryValue.toByte()
-        return retVal
+        return convert(batteryValue)
     }
 
     companion object {
@@ -56,5 +56,11 @@ class BatteryLevelCharacteristic: Characteristic {
         private const val BATTERY_LEVEL_MAX = 100
         private const val BATTERY_LEVEL_DESCRIPTION = "The current charge level of a " +
                 "battery. 100% represents fully charged while 0% represents fully discharged."
+    }
+
+    private fun convert(batteryPercentage: Int) : ByteArray {
+        val parser = BluetoothBytesParser()
+        parser.setIntValue(batteryPercentage, BluetoothBytesParser.FORMAT_UINT8)
+        return parser.value
     }
 }
