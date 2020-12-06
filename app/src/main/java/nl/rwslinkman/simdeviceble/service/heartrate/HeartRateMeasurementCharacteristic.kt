@@ -2,7 +2,7 @@ package nl.rwslinkman.simdeviceble.service.heartrate
 
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
-import android.text.Editable
+import nl.rwslinkman.simdeviceble.bluetooth.BluetoothBytesParser
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import java.util.*
 
@@ -19,6 +19,9 @@ class HeartRateMeasurementCharacteristic: Characteristic {
     override val type: Characteristic.Type
         get() = Characteristic.Type.Number
 
+    override val isRead: Boolean
+        get() = true
+
     override val isNotify: Boolean
         get() = true
 
@@ -26,28 +29,33 @@ class HeartRateMeasurementCharacteristic: Characteristic {
         get() = HEART_RATE_MEASUREMENT_DESCRIPTION
 
     override val initialValue: ByteArray?
-        get() = INITIAL_HEART_RATE_MEASUREMENT_VALUE.toString().toByteArray()
+        get() = convert(INITIAL_HEART_RATE_MEASUREMENT_VALUE)
 
     override fun validateWrite(offset: Int, value: ByteArray?): Int {
-        // TODO
         return BluetoothGatt.GATT_SUCCESS
     }
 
     override fun convertToPresentable(value: ByteArray): String {
-        // TODO
-        return value.first().toInt().toString()
+        val parser = BluetoothBytesParser(value)
+        val heartRate: Int = parser.getIntValue(HEART_RATE_MEASUREMENT_VALUE_FORMAT)
+        return heartRate.toString()
     }
 
     override fun convertToBytes(value: String): ByteArray {
-        return value.toByteArray()
+        val heartRate = Integer.parseInt(value)
+        return convert(heartRate)
     }
 
     companion object {
-        val CHAR_UUID = UUID.fromString("00002A37-0000-1000-8000-00805f9b34fb")
-        private val HEART_RATE_MEASUREMENT_VALUE_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT8
-        private val INITIAL_HEART_RATE_MEASUREMENT_VALUE = 60
-        private val EXPENDED_ENERGY_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT16
-        private val INITIAL_EXPENDED_ENERGY = 0
-        private val HEART_RATE_MEASUREMENT_DESCRIPTION = "Used to send a heart rate measurement"
+        val CHAR_UUID: UUID = UUID.fromString("00002A37-0000-1000-8000-00805f9b34fb")
+        private const val HEART_RATE_MEASUREMENT_VALUE_FORMAT = BluetoothBytesParser.FORMAT_UINT8
+        private const val INITIAL_HEART_RATE_MEASUREMENT_VALUE = 60
+        private const val HEART_RATE_MEASUREMENT_DESCRIPTION = "Used to send a heart rate measurement"
+    }
+
+    private fun convert(value: Int): ByteArray {
+        val parser = BluetoothBytesParser()
+        parser.setIntValue(value, HEART_RATE_MEASUREMENT_VALUE_FORMAT)
+        return parser.value
     }
 }

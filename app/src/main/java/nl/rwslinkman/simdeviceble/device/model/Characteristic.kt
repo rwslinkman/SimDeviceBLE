@@ -6,7 +6,8 @@ interface Characteristic {
 
     enum class Type {
         Number,
-        Text
+        Text,
+        Decimal
     }
 
     val name: String

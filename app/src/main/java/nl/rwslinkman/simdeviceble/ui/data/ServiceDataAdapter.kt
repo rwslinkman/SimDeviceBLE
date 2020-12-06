@@ -8,6 +8,7 @@ import nl.rwslinkman.simdeviceble.R
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Service
 import nl.rwslinkman.simdeviceble.ui.data.controls.CharacteristicControls
+import nl.rwslinkman.simdeviceble.ui.data.controls.DecimalCharacteristicControls
 import nl.rwslinkman.simdeviceble.ui.data.controls.NumberCharacteristicControls
 import nl.rwslinkman.simdeviceble.ui.data.controls.TextCharacteristicControls
 import java.util.*
@@ -55,6 +56,7 @@ class ServiceDataAdapter(private val listener: CharacteristicManipulationListene
             if (charItem.isRead) {
                 updateControls = when(charItem.type) {
                     Characteristic.Type.Number -> NumberCharacteristicControls()
+                    Characteristic.Type.Decimal -> DecimalCharacteristicControls()
                     else -> TextCharacteristicControls()
                 }
             }

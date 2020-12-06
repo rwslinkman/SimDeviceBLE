@@ -1,7 +1,7 @@
 package nl.rwslinkman.simdeviceble.service.heartrate
 
 import android.bluetooth.BluetoothGatt
-import android.text.Editable
+import nl.rwslinkman.simdeviceble.bluetooth.BluetoothBytesParser
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import java.util.*
 
@@ -22,12 +22,12 @@ class BodySensorLocationCharacteristic: Characteristic {
         get() = true
 
     override fun validateWrite(offset: Int, value: ByteArray?): Int {
-        // TODO
         return BluetoothGatt.GATT_SUCCESS
     }
 
     override fun convertToPresentable(value: ByteArray): String {
-        val locationCode = value.first().toInt()
+        val parser = BluetoothBytesParser(value)
+        val locationCode = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT8)
         val locationName = when (locationCode) {
             1 -> "Chest"
             2 -> "Wrist"
