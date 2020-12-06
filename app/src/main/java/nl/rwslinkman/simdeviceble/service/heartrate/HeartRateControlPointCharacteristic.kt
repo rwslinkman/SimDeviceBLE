@@ -1,12 +1,11 @@
 package nl.rwslinkman.simdeviceble.service.heartrate
 
 import android.bluetooth.BluetoothGatt
-import android.text.Editable
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import java.util.*
 
 /**
- * See [Heart Rate Control Point](https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_control_point.xml)
+ * Heart Rate Control Point
  */
 class HeartRateControlPointCharacteristic: Characteristic {
     override val name: String
@@ -14,6 +13,9 @@ class HeartRateControlPointCharacteristic: Characteristic {
 
     override val uuid: UUID
         get() = CHAR_UUID
+
+    override val type: Characteristic.Type
+        get() = Characteristic.Type.Number
 
     override val isWrite: Boolean
         get() = true

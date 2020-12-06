@@ -1,19 +1,17 @@
 package nl.rwslinkman.simdeviceble.device.model
 
-import android.text.Editable
 import java.util.*
 
 interface Characteristic {
 
     enum class Type {
-        number,
-        decimal,
-        text
+        Number,
+        Text
     }
 
     val name: String
     val uuid: UUID
-//    val type: Type // TODO:
+    val type: Type
 
     val isRead: Boolean
         get() = false

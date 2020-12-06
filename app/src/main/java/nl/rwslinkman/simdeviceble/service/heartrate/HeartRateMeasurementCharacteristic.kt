@@ -7,7 +7,7 @@ import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import java.util.*
 
 /**
- * See [Heart Rate Measurement](https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml)
+ * Heart Rate Measurement
  */
 class HeartRateMeasurementCharacteristic: Characteristic {
     override val name: String
@@ -16,11 +16,17 @@ class HeartRateMeasurementCharacteristic: Characteristic {
     override val uuid: UUID
         get() = CHAR_UUID
 
+    override val type: Characteristic.Type
+        get() = Characteristic.Type.Number
+
     override val isNotify: Boolean
         get() = true
 
     override val description: String?
         get() = HEART_RATE_MEASUREMENT_DESCRIPTION
+
+    override val initialValue: ByteArray?
+        get() = INITIAL_HEART_RATE_MEASUREMENT_VALUE.toString().toByteArray()
 
     override fun validateWrite(offset: Int, value: ByteArray?): Int {
         // TODO
