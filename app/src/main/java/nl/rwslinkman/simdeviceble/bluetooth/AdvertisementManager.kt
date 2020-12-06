@@ -17,7 +17,12 @@ class AdvertisementManager(
     var listener: Listener? = null
 ) {
     interface Listener {
-        fun updateDataContainer(characteristic: Characteristic, data: ByteArray, isInitialValue: Boolean)
+        fun updateDataContainer(
+            characteristic: Characteristic,
+            data: ByteArray,
+            isInitialValue: Boolean
+        )
+
         fun setIsAdvertising(isAdvertising: Boolean)
         fun onDeviceConnected(deviceAddress: String)
         fun onDeviceDisconnected(deviceAddress: String)
@@ -28,7 +33,7 @@ class AdvertisementManager(
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
     private val advertiser = bluetoothAdapter.bluetoothLeAdvertiser
     private var gattServer: BluetoothGattServer? = null
-    private val connectedDevices: MutableMap<String, BluetoothDevice> =  mutableMapOf()
+    private val connectedDevices: MutableMap<String, BluetoothDevice> = mutableMapOf()
 
     // Only used when advertising
     private lateinit var addServiceQueue: Queue<BluetoothGattService>
@@ -39,7 +44,8 @@ class AdvertisementManager(
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 if (newState == BluetoothGatt.STATE_CONNECTED) {
                     device?.let {
-                        Log.i(TAG,
+                        Log.i(
+                            TAG,
                             "onConnectionStateChange: connected to ${it.name} [${it.address}]"
                         )
                         onDeviceConnected(it)
@@ -300,7 +306,7 @@ class AdvertisementManager(
             val char = device.getCharacteristic(btChar.uuid)
             char?.let {
                 var btValue = byteArrayOf()
-                if(btChar.value !== null) {
+                if (btChar.value !== null) {
                     btValue = btChar.value
                 }
                 result[char] = btValue
@@ -420,7 +426,7 @@ class AdvertisementManager(
         const val TAG = "AdvertisementManager"
         private val CLIENT_CHARACTERISTIC_CONFIGURATION_UUID =
             UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
-        private val USER_DESCRIPTION_CHARACTERISTIC_UUID = UUID
-            .fromString("00002901-0000-1000-8000-00805f9b34fb")
+        private val USER_DESCRIPTION_CHARACTERISTIC_UUID =
+            UUID.fromString("00002901-0000-1000-8000-00805f9b34fb")
     }
 }

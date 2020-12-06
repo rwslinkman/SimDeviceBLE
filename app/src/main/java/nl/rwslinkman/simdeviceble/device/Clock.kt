@@ -4,6 +4,7 @@ import nl.rwslinkman.simdeviceble.device.model.Device
 import nl.rwslinkman.simdeviceble.device.model.Service
 import nl.rwslinkman.simdeviceble.service.battery.BatteryService
 import nl.rwslinkman.simdeviceble.service.CurrentTimeService
+import nl.rwslinkman.simdeviceble.service.deviceinformation.DeviceInformationService
 import java.util.*
 
 class Clock: Device() {
@@ -14,6 +15,7 @@ class Clock: Device() {
     override val services: List<Service>
         get() = listOf(
             BatteryService(),
-            CurrentTimeService()
+            CurrentTimeService(),
+            DeviceInformationService()
         )
 }
