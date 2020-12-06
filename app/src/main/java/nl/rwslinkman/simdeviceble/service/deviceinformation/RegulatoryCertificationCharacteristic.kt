@@ -7,7 +7,7 @@ import java.util.*
 
 class RegulatoryCertificationCharacteristic: Characteristic {
     override val name: String
-        get() = "RegulatoryCertificationCharacteristic"
+        get() = "RegulatoryCertification"
     override val uuid: UUID
         get() = BluetoothUUID.fromSigNumber("2A2A")
     override val type: Characteristic.Type

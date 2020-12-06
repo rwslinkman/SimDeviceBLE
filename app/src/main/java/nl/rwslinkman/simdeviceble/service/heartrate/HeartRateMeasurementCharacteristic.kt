@@ -1,7 +1,6 @@
 package nl.rwslinkman.simdeviceble.service.heartrate
 
 import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCharacteristic
 import nl.rwslinkman.simdeviceble.bluetooth.BluetoothBytesParser
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import java.util.*

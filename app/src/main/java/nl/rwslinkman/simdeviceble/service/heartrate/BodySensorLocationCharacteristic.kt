@@ -6,7 +6,7 @@ import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import java.util.*
 
 /**
- * See [Body Sensor Location](https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.body_sensor_location.xml)
+ * Body Sensor Location
  */
 class BodySensorLocationCharacteristic: Characteristic {
     override val name: String

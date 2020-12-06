@@ -7,7 +7,7 @@ import java.util.*
 
 class SystemIdentifierCharacteristic: Characteristic {
     override val name: String
-        get() = "SystemIdentifierCharacteristic"
+        get() = "SystemIdentifier"
     override val uuid: UUID
         get() = BluetoothUUID.fromSigNumber("2A23")
     override val type: Characteristic.Type

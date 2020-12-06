@@ -9,10 +9,6 @@ import java.util.*
  * Heart Rate Service](https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.heart_rate.xml)
  */
 class HeartRateService: Service {
-    private val MIN_UINT = 0
-    private val MAX_UINT8 = Math.pow(2.0, 8.0).toInt() - 1
-    private val MAX_UINT16 = Math.pow(2.0, 16.0).toInt() - 1
-
     override val name: String
         get() = "HeartRateService"
 

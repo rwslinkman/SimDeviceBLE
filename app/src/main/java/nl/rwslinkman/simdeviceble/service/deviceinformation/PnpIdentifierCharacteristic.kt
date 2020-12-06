@@ -7,7 +7,7 @@ import java.util.*
 
 class PnpIdentifierCharacteristic: Characteristic {
     override val name: String
-        get() = "PnpIdentifierCharacteristic"
+        get() = "PnpIdentifier"
     override val uuid: UUID
         get() = BluetoothUUID.fromSigNumber("2A50")
     override val type: Characteristic.Type

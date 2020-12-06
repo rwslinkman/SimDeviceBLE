@@ -10,7 +10,7 @@ import java.util.*
 
 class CurrentTimeCharacteristic: Characteristic {
     override val name: String
-        get() = "CurrentTimeCharacteristic"
+        get() = "Current Time"
     override val uuid: UUID
         get() = BluetoothUUID.fromSigNumber("2A2B")
     override val type: Characteristic.Type

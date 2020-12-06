@@ -7,7 +7,7 @@ import java.util.*
 
 class SerialNumberCharacteristic: Characteristic {
     override val name: String
-        get() = "SerialNumberCharacteristic"
+        get() = "SerialNumber"
     override val uuid: UUID
         get() = BluetoothUUID.fromSigNumber("2A25")
     override val type: Characteristic.Type

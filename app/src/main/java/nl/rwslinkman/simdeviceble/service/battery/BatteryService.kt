@@ -19,8 +19,5 @@ class BatteryService: Service {
 
     companion object {
         private val SERVICE_UUID = BluetoothUUID.fromSigNumber("180F")
-
-        private const val INITIAL_BATTERY_LEVEL = 50
-        private const val BATTERY_LEVEL_MAX = 100
     }
 }

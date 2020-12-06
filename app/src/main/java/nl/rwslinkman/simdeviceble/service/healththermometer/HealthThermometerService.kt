@@ -1,6 +1,5 @@
 package nl.rwslinkman.simdeviceble.service.healththermometer
 
-import android.bluetooth.BluetoothGattCharacteristic
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Service
 import java.util.*
