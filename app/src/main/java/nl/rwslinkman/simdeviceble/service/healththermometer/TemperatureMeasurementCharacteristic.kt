@@ -16,6 +16,9 @@ class TemperatureMeasurementCharacteristic : Characteristic {
     override val uuid: UUID
         get() = UUID.fromString("00002A1C-0000-1000-8000-00805f9b34fb")
 
+    override val type: Characteristic.Type
+        get() = Characteristic.Type.Number
+
     override val isIndicate: Boolean
         get() = true
 

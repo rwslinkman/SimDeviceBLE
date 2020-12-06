@@ -15,6 +15,9 @@ class BodySensorLocationCharacteristic: Characteristic {
     override val uuid: UUID
         get() = CHAR_UUID
 
+    override val type: Characteristic.Type
+        get() = Characteristic.Type.Number
+
     override val isRead: Boolean
         get() = true
 

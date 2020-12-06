@@ -1,40 +1,29 @@
-package nl.rwslinkman.simdeviceble.service.heartrate
+package nl.rwslinkman.simdeviceble.service.deviceinformation
 
 import android.bluetooth.BluetoothGatt
+import nl.rwslinkman.simdeviceble.bluetooth.BluetoothUUID
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import java.util.*
 
-/**
- * Heart Rate Control Point
- */
-class HeartRateControlPointCharacteristic: Characteristic {
+class SystemIdentifierCharacteristic: Characteristic {
     override val name: String
-        get() = "HeartRateControlPoint"
-
+        get() = "SystemIdentifierCharacteristic"
     override val uuid: UUID
-        get() = CHAR_UUID
-
+        get() = BluetoothUUID.fromSigNumber("2A23")
     override val type: Characteristic.Type
-        get() = Characteristic.Type.Number
-
-    override val isWrite: Boolean
+        get() = Characteristic.Type.Text
+    override val isRead: Boolean
         get() = true
 
     override fun validateWrite(offset: Int, value: ByteArray?): Int {
-        // TODO
         return BluetoothGatt.GATT_SUCCESS
     }
 
     override fun convertToPresentable(value: ByteArray): String {
-        // TODO
-        return value.first().toInt().toString()
+        return String(value)
     }
 
     override fun convertToBytes(value: String): ByteArray {
         return value.toByteArray()
-    }
-
-    companion object {
-        val CHAR_UUID: UUID = UUID.fromString("00002A39-0000-1000-8000-00805f9b34fb")
     }
 }

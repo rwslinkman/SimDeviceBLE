@@ -9,6 +9,7 @@ import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Service
 import nl.rwslinkman.simdeviceble.ui.data.controls.CharacteristicControls
 import nl.rwslinkman.simdeviceble.ui.data.controls.NumberCharacteristicControls
+import nl.rwslinkman.simdeviceble.ui.data.controls.TextCharacteristicControls
 import java.util.*
 
 class ServiceDataAdapter(private val listener: CharacteristicManipulationListener): RecyclerView.Adapter<ServiceDataViewHolder>() {
@@ -51,9 +52,11 @@ class ServiceDataAdapter(private val listener: CharacteristicManipulationListene
             charViewHolder.valueView.text = charValue
 
             var updateControls: CharacteristicControls? = null
-            // TODO Chose updateControls type based on characteristic
             if (charItem.isRead) {
-                updateControls = NumberCharacteristicControls()
+                updateControls = when(charItem.type) {
+                    Characteristic.Type.Number -> NumberCharacteristicControls()
+                    else -> TextCharacteristicControls()
+                }
             }
 
             updateControls?.let {

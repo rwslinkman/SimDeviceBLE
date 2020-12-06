@@ -4,16 +4,20 @@ import nl.rwslinkman.simdeviceble.device.model.Device
 import nl.rwslinkman.simdeviceble.device.model.Service
 import nl.rwslinkman.simdeviceble.service.battery.BatteryService
 import nl.rwslinkman.simdeviceble.service.CurrentTimeService
+import nl.rwslinkman.simdeviceble.service.deviceinformation.DeviceInformationService
 import java.util.*
 
-class Clock: Device() {
+class DigitalClock: Device() {
     override val name: String
-        get() = "Digital clock"
+        get() = "Digital Clock"
+
     override val primaryServiceUuid: UUID
-        get() = UUID.randomUUID()
+        get() = CurrentTimeService.SERVICE_UUID
+
     override val services: List<Service>
         get() = listOf(
             BatteryService(),
-            CurrentTimeService()
+            CurrentTimeService(),
+            DeviceInformationService()
         )
 }
