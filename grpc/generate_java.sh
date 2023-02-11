@@ -9,7 +9,7 @@ rm -rf ./grpc/generated_kt
 mkdir ./grpc/generated_java
 
 print "Running code generator..."
-protoc -I=./grpc --plugin=protoc-gen-grpc-java=./grpc/compiler/protoc-gen-grpc-java --java_out=./grpc/generated_java --grpc-java_out=./grpc/generated_java ./grpc/SimDeviceBLE.proto
+protoc -I=./grpc --plugin=protoc-gen-grpc-java=./grpc/compiler/protoc-gen-grpc-java-1460 --java_out=./grpc/generated_java --grpc-java_out=./grpc/generated_java ./grpc/SimDeviceBLE.proto
 print "Code generation completed!"
 
 print "Applying generated code to project source"

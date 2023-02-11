@@ -23,7 +23,10 @@ Developers do not need to write their own View classes.
 Services and characteristics are introspected and Views are created dynamically.   
 
 ![Home screen allows for configuration of Advertisement data](docs/image_home_fragment.jpg)
-![Service Data screen manipulates data of all advertised characteristics](docs/image_data_fragment.jpg)
+![Service Data screen manipulates data of all advertised characteristics](docs/image_data_fragment.jpg)    
+
+The Gradle configuration uses the `protoc-gen-grpc-java` plugin for `protoc` to generate classes.   
+Download the compiler from [here](https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/) for your situation.   
 
 ## gRPC
 SimDeviceBLE defines a [gRPC](https://grpc.io/) interface to take control of the BLE device.   
