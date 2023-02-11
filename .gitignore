@@ -97,3 +97,4 @@ lint/tmp/
 .cxx
 .idea
 grpc/generated_java
+grpc/generated_kt
