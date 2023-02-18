@@ -1,6 +1,7 @@
 package nl.rwslinkman.simdeviceble.service.healththermometer
 
 import android.bluetooth.BluetoothGatt
+import nl.rwslinkman.simdeviceble.bluetooth.BluetoothUUID
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -15,7 +16,7 @@ class MeasurementIntervalCharacteristic: Characteristic {
         get() = "MeasurementInterval"
 
     override val uuid: UUID
-        get() = UUID.fromString("00002A21-0000-1000-8000-00805f9b34fb")
+        get() = BluetoothUUID.fromSigNumber("2A21")
 
     override val type: Characteristic.Type
         get() = Characteristic.Type.Number

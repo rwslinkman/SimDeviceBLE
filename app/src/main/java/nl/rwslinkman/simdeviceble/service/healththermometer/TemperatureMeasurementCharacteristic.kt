@@ -2,6 +2,7 @@ package nl.rwslinkman.simdeviceble.service.healththermometer
 
 import android.bluetooth.BluetoothGatt
 import nl.rwslinkman.simdeviceble.bluetooth.BluetoothBytesParser
+import nl.rwslinkman.simdeviceble.bluetooth.BluetoothUUID
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import java.util.*
 
@@ -13,7 +14,7 @@ class TemperatureMeasurementCharacteristic : Characteristic {
         get() = "TemperatureMeasurement"
 
     override val uuid: UUID
-        get() = UUID.fromString("00002A1C-0000-1000-8000-00805f9b34fb")
+        get() = BluetoothUUID.fromSigNumber("2A1C")
 
     override val type: Characteristic.Type
         get() = Characteristic.Type.Decimal
@@ -27,10 +28,10 @@ class TemperatureMeasurementCharacteristic : Characteristic {
     override val isIndicate: Boolean
         get() = true
 
-    override val description: String?
+    override val description: String
         get() = TEMPERATURE_MEASUREMENT_DESCRIPTION
 
-    override val initialValue: ByteArray?
+    override val initialValue: ByteArray
         get() = convert(INITIAL_TEMPERATURE_MEASUREMENT_VALUE)
 
     override fun validateWrite(offset: Int, value: ByteArray?): Int {

@@ -1,5 +1,6 @@
 package nl.rwslinkman.simdeviceble.service.healththermometer
 
+import nl.rwslinkman.simdeviceble.bluetooth.BluetoothUUID
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Service
 import java.util.*
@@ -36,6 +37,6 @@ class HealthThermometerService: Service {
         )
 
     companion object {
-        val SERVICE_UUID: UUID = UUID.fromString("00001809-0000-1000-8000-00805f9b34fb")
+        val SERVICE_UUID: UUID = BluetoothUUID.fromSigNumber("1809")
     }
 }
