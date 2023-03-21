@@ -1,47 +1,53 @@
 package nl.rwslinkman.simdeviceble.cucumbertest.test.steps
 
-import android.util.Log
-import com.google.protobuf.Empty
 import io.cucumber.java.After
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
-import io.grpc.ManagedChannelBuilder
-import nl.rwslinkman.simdeviceble.grpc.server.SimDeviceBLEGrpc
-import nl.rwslinkman.simdeviceble.grpc.server.StartAdvertisementRequest
-import nl.rwslinkman.simdeviceble.grpc.server.StartAdvertisementResponse
-import org.junit.Assert.assertNotNull
+import io.cucumber.java.en.When
+import nl.rwslinkman.simdeviceble.cucumbertest.test.SimDeviceGrpcClient
+import nl.rwslinkman.simdeviceble.grpc.server.SimDevice
+import org.junit.Assert.*
 
 class GrpcControlSteps {
 
-    private var response: StartAdvertisementResponse? = null
+    private val grpcClient = SimDeviceGrpcClient(tabletIP, grpcPort)
 
-    private val commChannel = ManagedChannelBuilder.forAddress(tabletIP, grpcPort).usePlaintext().build()
-    private val grpcClient = SimDeviceBLEGrpc.newBlockingStub(commChannel)
+    private var supportedDevicesResponse: List<SimDevice>? = null
 
-    @Given("I'm executing a call")
-    fun executeCall() {
-        val request = StartAdvertisementRequest.newBuilder()
-        request.deviceName = "Digital Clock"
-        request.advertiseDeviceName = true
-        request.connectable = true
-
-        response = grpcClient.startAdvertisement(request.build())
-        Log.i(TAG, "response: ${response?.advertisementName ?: "niks"}")
+    @Given("I have a gRPC client")
+    fun grpcSetup() {
+        assertNotNull(grpcClient)
     }
 
-    @Then("It should not crash")
-    fun verify() {
-        assertNotNull(response)
+    @When("the simulator is instructed to return a list of supported devices")
+    fun executeGrpcRequestListDevices() {
+        supportedDevicesResponse = grpcClient.listAvailableSimDevices()
+    }
+
+    @Then("it should return all supported devices")
+    fun verifyGrpcRequestListDevices() {
+        assertNotNull(supportedDevicesResponse)
+        assertTrue(supportedDevicesResponse?.isNotEmpty() ?: false)
+    }
+
+    @Given("the simulator is instructed to start advertising as a {string} device")
+    fun executeGrpcRequestStartAdvertisement(deviceName: String) {
+        val advertisementResponse = grpcClient.startAdvertisement(deviceName)
+        assertNotNull(advertisementResponse)
+    }
+
+    @When("the simulator is instructed to stop advertising")
+    fun executeGrpcRequestStopAdvertisement() {
+        grpcClient.stopAdvertisement()
     }
 
     companion object {
         private const val tabletIP = "192.168.2.6"
         private const val grpcPort = 8911
-        private const val TAG = "GrpcControlSteps"
     }
 
     @After
     fun stopAdvertisingOnTargetServer() {
-        grpcClient.stopAdvertisement(Empty.getDefaultInstance())
+        grpcClient.stopAdvertisement()
     }
 }

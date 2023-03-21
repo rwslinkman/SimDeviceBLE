@@ -1,11 +1,22 @@
 Feature: Advertisement using gRPC server
 
-  @ignored
-  Scenario: Starting to scan for advertising devices
+  Scenario Outline: Starting to scan for advertising devices
     Given I have configured the Bluetooth scanner
-    When I start a BLE discovery for 5 seconds
-    Then it should find the "Lenovo Tab P11 Pro" BLE device
+    And the simulator is instructed to start advertising as a <simulatedDevice> device
+    When I start a BLE discovery for <scanDuration> seconds
+    Then it should find the <expectedAdvertisementName> BLE device
 
-  Scenario: Executing a gRPC call to the tablet
-    Given I'm executing a call
-    Then It should not crash
+  Examples:
+    | simulatedDevice     | scanDuration  | expectedAdvertisementName |
+    | "Digital Clock"     | 5             | "Lenovo Tab P11 Pro"      |
+    | "Thermometer (Ear)" | 5             | "Lenovo Tab P11 Pro"      |
+
+  Scenario: Changing the type of device that is advertised
+    Given I have configured the Bluetooth scanner
+    And the simulator is instructed to start advertising as a "Thermometer (Ear)" device
+    When I start a BLE discovery for 5 seconds
+    And it has found the "Lenovo Tab P11 Pro" device advertising the "Health Thermometer" service UUID
+    And the simulator is instructed to stop advertising
+    And the simulator is instructed to start advertising as a "Digital Clock" device
+    And I start a BLE discovery for 5 seconds
+    Then it has found the "Lenovo Tab P11 Pro" device advertising the "Current Time" service UUID

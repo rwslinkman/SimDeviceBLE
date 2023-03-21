@@ -19,21 +19,11 @@ class BluetoothSteps
 
     private var bluetoothLeScanner: BluetoothLeScanner? = null
     private val scanResults: MutableList<ScanResult> = mutableListOf()
-
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
+            super.onScanResult(callbackType, result)
             Log.i(TAG, "onScanResult")
-            result?.let {
-                scanResults.add(it)
-            }
-        }
-
-        override fun onBatchScanResults(results: MutableList<ScanResult>?) {
-            Log.i(TAG, "onBatchScanResults: ")
-        }
-
-        override fun onScanFailed(errorCode: Int) {
-            Log.i(TAG, "onScanFailed: ")
+            result?.let { scanResults.add(it) }
         }
     }
 
@@ -47,6 +37,7 @@ class BluetoothSteps
     fun startBleDiscovery(duration: Int) = runBlocking {
         if(bluetoothLeScanner == null) throw IllegalStateException("Setup not completed. Add 'Given I have configured the Bluetooth scanner' to the scenario")
 
+        scanResults.clear()
         bluetoothLeScanner?.startScan(scanCallback)
         delay(duration * 1000L)
         bluetoothLeScanner?.stopScan(scanCallback)
@@ -59,8 +50,30 @@ class BluetoothSteps
         assertNotNull("Target device was not found among scan results", targetScanResult)
     }
 
+    @Then("it has found the {string} device advertising the {string} service UUID")
+    fun verifyDevicePrimaryServiceUUID(deviceName: String, serviceName: String) {
+        val expectedPrimaryServiceUUID = bleGattServiceMap[serviceName]
+        assertNotNull(expectedPrimaryServiceUUID)
+        assertNotEquals("", expectedPrimaryServiceUUID)
+
+        assertTrue(scanResults.isNotEmpty())
+        val targetScanResult = scanResults.find { it.device.name == deviceName }
+        val serviceUUIDs = targetScanResult?.scanRecord?.serviceUuids
+        assertNotNull(serviceUUIDs)
+        assertTrue(serviceUUIDs!!.isNotEmpty())
+
+        val actualServiceUUID = serviceUUIDs.find { it.uuid.toString() == expectedPrimaryServiceUUID }
+        assertNotNull(actualServiceUUID)
+    }
+
     companion object {
         private const val TAG = "BluetoothSteps"
+        private val bleGattServiceMap: Map<String, String> = mapOf(
+            "Health Thermometer" to bleUUID("1809"),
+            "Current Time" to bleUUID("1805")
+        )
+
+        private fun bleUUID(shortUUID: String) = "0000${shortUUID}-0000-1000-8000-00805f9b34fb"
     }
 
     @After
