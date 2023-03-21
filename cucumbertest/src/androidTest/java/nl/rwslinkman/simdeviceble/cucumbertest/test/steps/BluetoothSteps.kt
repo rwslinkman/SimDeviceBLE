@@ -52,8 +52,8 @@ class BluetoothSteps
         bluetoothLeScanner?.stopScan(scanCallback)
     }
 
-    @Then("it should find the target BLE device")
-    fun shouldFindDevices() {
+    @Then("it should find the {string} BLE device")
+    fun shouldFindDevices(targetDeviceName: String) {
         assertTrue(scanResults.isNotEmpty())
         val targetScanResult = scanResults.find { it.device.name == targetDeviceName }
         assertNotNull(targetScanResult)
@@ -61,7 +61,6 @@ class BluetoothSteps
 
     companion object {
         private const val TAG = "BluetoothSteps"
-        private const val targetDeviceName = "Lenovo Tab P11 Pro"
     }
 
     @After

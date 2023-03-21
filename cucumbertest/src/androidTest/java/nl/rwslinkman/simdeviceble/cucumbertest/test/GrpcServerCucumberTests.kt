@@ -6,6 +6,6 @@ import io.cucumber.junit.CucumberOptions
     features = ["features"],
     tags = ["not @ignored"],
     glue = ["nl.rwslinkman.simdeviceble.cucumbertest.test.steps"],
-    stepNotifications = false
+    plugin = []
 )
 class GrpcServerCucumberTests
