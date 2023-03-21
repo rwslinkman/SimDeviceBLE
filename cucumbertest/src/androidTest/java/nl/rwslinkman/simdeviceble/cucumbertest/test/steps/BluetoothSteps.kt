@@ -13,7 +13,7 @@ import kotlinx.coroutines.runBlocking
 import nl.rwslinkman.simdeviceble.cucumbertest.test.ActivityScenarioHolder
 import org.junit.Assert.*
 
-class GrpcSteps
+class BluetoothSteps
 {
     private val scenario: ActivityScenarioHolder = ActivityScenarioHolder()
 
@@ -37,12 +37,6 @@ class GrpcSteps
         }
     }
 
-    @Given("I am saying {string} to the console")
-    fun givenSayingToConsole(words: String) {
-        scenario.launchTestActivity()
-        Log.i(TAG, "givenSayingToConsole: step says $words")
-    }
-
     @Given("I have configured the Bluetooth scanner")
     fun setupBleStuff() {
         scenario.launchTestActivity()
@@ -51,14 +45,14 @@ class GrpcSteps
 
     @When("I start a BLE discovery for {int} seconds")
     fun startBleDiscovery(duration: Int) = runBlocking {
-        if(bluetoothLeScanner == null) throw IllegalStateException("Setup not completed. ")
+        if(bluetoothLeScanner == null) throw IllegalStateException("Setup not completed. Add 'Given I have configured the Bluetooth scanner' to the scenario")
 
         bluetoothLeScanner?.startScan(scanCallback)
         delay(duration * 1000L)
         bluetoothLeScanner?.stopScan(scanCallback)
     }
 
-    @Then("it should find the target device")
+    @Then("it should find the target BLE device")
     fun shouldFindDevices() {
         assertTrue(scanResults.isNotEmpty())
         val targetScanResult = scanResults.find { it.device.name == targetDeviceName }
@@ -66,7 +60,7 @@ class GrpcSteps
     }
 
     companion object {
-        private const val TAG = "GrpcSteps"
+        private const val TAG = "BluetoothSteps"
         private const val targetDeviceName = "Lenovo Tab P11 Pro"
     }
 

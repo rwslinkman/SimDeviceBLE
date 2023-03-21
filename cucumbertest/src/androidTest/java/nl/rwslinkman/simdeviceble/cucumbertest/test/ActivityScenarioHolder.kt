@@ -5,12 +5,10 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.BluetoothLeScanner
 import android.content.Intent
-import android.util.Log
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import io.cucumber.java.After
 import nl.rwslinkman.simdeviceble.cucumbertest.CucumberTestActivity
-import nl.rwslinkman.simdeviceble.cucumbertest.test.steps.GrpcSteps
 
 class ActivityScenarioHolder {
     private var scenario: ActivityScenario<*>? = null
@@ -23,13 +21,10 @@ class ActivityScenarioHolder {
     fun setupBluetoothScanner(): BluetoothLeScanner? {
         val app = InstrumentationRegistry.getInstrumentation().targetContext
         val bluetoothManager = app.getSystemService(BluetoothManager::class.java)
-        val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.adapter
-        if (bluetoothAdapter == null) {
-            // Device doesn't support Bluetooth
-            Log.i(TAG, "setupBleStuff: No BLE support")
-            return null
-        }
+        val bluetoothAdapter: BluetoothAdapter = bluetoothManager.adapter
+            ?: throw IllegalStateException("No BLE support")
 
+        // TODO: Permission checks
         return bluetoothAdapter.bluetoothLeScanner
     }
 
@@ -43,9 +38,5 @@ class ActivityScenarioHolder {
     @After
     fun close(){
         scenario?.close()
-    }
-
-    companion object {
-        private const val TAG = "ActivityScenarioHolder"
     }
 }
