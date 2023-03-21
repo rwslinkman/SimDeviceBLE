@@ -1,6 +1,8 @@
 package nl.rwslinkman.simdeviceble.cucumbertest.test.steps
 
 import android.util.Log
+import com.google.protobuf.Empty
+import io.cucumber.java.After
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.grpc.ManagedChannelBuilder
@@ -13,17 +15,17 @@ class GrpcControlSteps {
 
     private var response: StartAdvertisementResponse? = null
 
+    private val commChannel = ManagedChannelBuilder.forAddress(tabletIP, grpcPort).usePlaintext().build()
+    private val grpcClient = SimDeviceBLEGrpc.newBlockingStub(commChannel)
+
     @Given("I'm executing a call")
     fun executeCall() {
-        val channel = ManagedChannelBuilder.forAddress(tabletIP, grpcPort).usePlaintext().build()
-        val stub = SimDeviceBLEGrpc.newBlockingStub(channel)
-
         val request = StartAdvertisementRequest.newBuilder()
         request.deviceName = "Digital Clock"
         request.advertiseDeviceName = true
         request.connectable = true
 
-        response = stub.startAdvertisement(request.build())
+        response = grpcClient.startAdvertisement(request.build())
         Log.i(TAG, "response: ${response?.advertisementName ?: "niks"}")
     }
 
@@ -36,5 +38,10 @@ class GrpcControlSteps {
         private const val tabletIP = "192.168.2.6"
         private const val grpcPort = 8911
         private const val TAG = "GrpcControlSteps"
+    }
+
+    @After
+    fun stopAdvertisingOnTargetServer() {
+        grpcClient.stopAdvertisement(Empty.getDefaultInstance())
     }
 }
