@@ -8,10 +8,10 @@ import io.cucumber.java.After
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
-import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import nl.rwslinkman.simdeviceble.cucumbertest.test.ActivityScenarioHolder
+import org.junit.Assert.*
 
 class GrpcSteps
 {
@@ -58,14 +58,16 @@ class GrpcSteps
         bluetoothLeScanner?.stopScan(scanCallback)
     }
 
-    @Then("it should find some devices")
+    @Then("it should find the target device")
     fun shouldFindDevices() {
-        Log.i(TAG, "shouldFindDevices: Discovery end")
         assertTrue(scanResults.isNotEmpty())
+        val targetScanResult = scanResults.find { it.device.name == targetDeviceName }
+        assertNotNull(targetScanResult)
     }
 
     companion object {
         private const val TAG = "GrpcSteps"
+        private const val targetDeviceName = "Lenovo Tab P11 Pro"
     }
 
     @After
