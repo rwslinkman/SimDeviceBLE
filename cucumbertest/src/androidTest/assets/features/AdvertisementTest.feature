@@ -4,6 +4,6 @@ Feature: Advertisement using gRPC server
     Given I am saying "Hello World" to the console
 
   Scenario: Starting to scan for advertising devices
-    Given I have set up the BLE stuff
-    When I start a BLE discovery
+    Given I have configured the Bluetooth scanner
+    When I start a BLE discovery for 5 seconds
     Then it should find some devices
