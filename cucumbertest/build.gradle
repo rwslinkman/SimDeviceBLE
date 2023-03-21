@@ -20,6 +20,13 @@ android {
             useSupportLibrary true
         }
     }
+    sourceSets {
+        main {
+            java {
+                srcDirs += "build/generated/src"
+            }
+        }
+    }
 
     buildTypes {
         release {
@@ -42,12 +49,21 @@ android {
 }
 
 dependencies {
+    // Used in empty activity that runs the test
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.0'
     implementation "androidx.appcompat:appcompat:1.6.1"
     implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+    // Actual dependencies in testing
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation "io.cucumber:cucumber-android:4.10.0"
+    // gRPC dependencies, only used in test but generated in main/src
+    implementation "io.grpc:grpc-okhttp:1.53.0"
+    implementation "io.grpc:grpc-protobuf:1.53.0"
+    implementation "io.grpc:grpc-stub:1.53.0"
+    implementation "io.grpc:grpc-api:1.53.0"
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
+
 }

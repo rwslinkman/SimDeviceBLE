@@ -15,7 +15,7 @@ import nl.rwslinkman.simdeviceble.grpc.server.GrpcServer
 
 class GrpcServerActivity : AppCompatActivity() {
     // grpc
-    private val grpcPort = 8910
+    private val grpcPort = 8911
     private val grpcServer = GrpcServer(grpcPort)
     private lateinit var dataModel: GrpcDataModel
 

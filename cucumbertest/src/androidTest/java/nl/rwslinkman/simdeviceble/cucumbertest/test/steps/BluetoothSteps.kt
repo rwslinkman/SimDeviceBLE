@@ -56,7 +56,7 @@ class BluetoothSteps
     fun shouldFindDevices(targetDeviceName: String) {
         assertTrue(scanResults.isNotEmpty())
         val targetScanResult = scanResults.find { it.device.name == targetDeviceName }
-        assertNotNull(targetScanResult)
+        assertNotNull("Target device was not found among scan results", targetScanResult)
     }
 
     companion object {
