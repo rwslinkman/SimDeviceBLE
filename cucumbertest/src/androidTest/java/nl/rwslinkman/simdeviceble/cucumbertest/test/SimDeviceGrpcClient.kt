@@ -42,4 +42,8 @@ class SimDeviceGrpcClient(targetIP: String, targetPort: Int) {
         request.uuid = uuid
         grpcStub.notifyCharacteristic(request.build())
     }
+
+    fun shutdown() {
+        commChannel.shutdownNow()
+    }
 }

@@ -27,6 +27,7 @@ class GrpcServerActivity : AppCompatActivity() {
 
     // ui
     private lateinit var statusSubtitle: TextView
+    private lateinit var grpcEventListView: RecyclerView
     private val grpcEventAdapter = EventListAdapter()
 
     private val eventListener = object : GrpcEventListener {
@@ -41,7 +42,7 @@ class GrpcServerActivity : AppCompatActivity() {
         }
 
         override fun onGrpcCallReceived(event: GrpcCall) {
-            val eventDetails = "Received call: ${event.name}"
+            val eventDetails = "Received gRPC event ${event.name}"
             addEventToView(eventDetails)
         }
     }
@@ -52,17 +53,20 @@ class GrpcServerActivity : AppCompatActivity() {
             addEventToView("Value of ${characteristic.name} was updated")
         }
 
-        override fun setIsAdvertising(isAdvertising: Boolean) {
-            val event = if(isAdvertising) "started" else "stopped"
-            addEventToView("SimDeviceBLE has ${event} advertising")
+        override fun setIsAdvertising(isAdvertising: Boolean, advertisedDevice: String?) {
+            val event = if(isAdvertising) {
+                "SimDeviceBLE has started advertising as a '${advertisedDevice ?: "unknown"}' device"
+            }
+            else "SimDeviceBLE has stopped advertising"
+            addEventToView(event)
         }
 
         override fun onDeviceConnected(deviceAddress: String) {
-            addEventToView("Device $deviceAddress has connected to SimDeviceBLE")
+            addEventToView("Device '$deviceAddress' has connected to SimDeviceBLE")
         }
 
         override fun onDeviceDisconnected(deviceAddress: String) {
-            addEventToView("Device $deviceAddress has disconnected from SimDeviceBLE")
+            addEventToView("Device '$deviceAddress' has disconnected from SimDeviceBLE")
         }
     }
 
@@ -72,7 +76,8 @@ class GrpcServerActivity : AppCompatActivity() {
 
         statusSubtitle = findViewById(R.id.simdeviceble_grpc_subtitle)
 
-        findViewById<RecyclerView>(R.id.simdeviceble_grpc_eventlist).apply {
+        grpcEventListView = findViewById<RecyclerView>(R.id.simdeviceble_grpc_eventlist)
+        grpcEventListView.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
             adapter = grpcEventAdapter
@@ -108,8 +113,10 @@ class GrpcServerActivity : AppCompatActivity() {
 
     private fun addEventToView(eventDetails: String) {
         runOnUiThread {
-            grpcEventAdapter.addGrpcEvent(eventDetails)
-            grpcEventAdapter.notifyDataSetChanged()
+            grpcEventAdapter.addGrpcEvent(EventListAdapter.Item(eventDetails))
+            val insertedPos = grpcEventAdapter.itemCount - 1
+            grpcEventAdapter.notifyItemInserted(insertedPos)
+            grpcEventListView.scrollToPosition(insertedPos)
         }
     }
 }

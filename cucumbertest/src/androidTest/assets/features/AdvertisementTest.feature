@@ -17,6 +17,7 @@ Feature: Advertisement using gRPC server
     When I start a BLE discovery for 5 seconds
     And it has found the "Lenovo Tab P11 Pro" device advertising the "Health Thermometer" service UUID
     And the simulator is instructed to stop advertising
+    And I wait for 2 seconds
     And the simulator is instructed to start advertising as a "Digital Clock" device
     And I start a BLE discovery for 5 seconds
     Then it has found the "Lenovo Tab P11 Pro" device advertising the "Current Time" service UUID
@@ -27,3 +28,4 @@ Feature: Advertisement using gRPC server
     When I start a BLE discovery for 5 seconds
     And it has found the "Lenovo Tab P11 Pro" device advertising the "Current Time" service UUID
     And I connect to the target device
+    And I wait for the connection

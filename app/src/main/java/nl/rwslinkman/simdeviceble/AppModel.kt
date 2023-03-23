@@ -69,7 +69,7 @@ class AppModel: ViewModel(), AdvertisementManager.Listener {
         postDataContainer()
     }
 
-    override fun setIsAdvertising(isAdvertising: Boolean) {
+    override fun setIsAdvertising(isAdvertising: Boolean, advertisedDevice: String?) {
         this.isAdvertising.postValue(isAdvertising)
     }
 
