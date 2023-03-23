@@ -31,105 +31,21 @@ class BluetoothSteps
     private val gattCallback = object : BluetoothGattCallback() {
         override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
             super.onServicesDiscovered(gatt, status)
-            Log.i(TAG, "onServicesDiscovered: ")
-        }
-
-        override fun onPhyUpdate(gatt: BluetoothGatt?, txPhy: Int, rxPhy: Int, status: Int) {
-            super.onPhyUpdate(gatt, txPhy, rxPhy, status)
-            Log.i(TAG, "onPhyUpdate: ")
-        }
-
-        override fun onPhyRead(gatt: BluetoothGatt?, txPhy: Int, rxPhy: Int, status: Int) {
-            super.onPhyRead(gatt, txPhy, rxPhy, status)
-            Log.i(TAG, "onPhyRead: ")
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                displayGattServices(targetGattDevice?.services)
+            }
         }
 
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
             super.onConnectionStateChange(gatt, status, newState)
-            // int STATE_CONNECTED = 2;
-            // int STATE_CONNECTING = 1;
-            // int STATE_DISCONNECTED = 0;
-            // int STATE_DISCONNECTING = 3;
-
-            val newStateStr = when(newState) {
-                BluetoothGatt.STATE_CONNECTED -> "connected"
-                BluetoothGatt.STATE_CONNECTING -> "connecting"
-                BluetoothGatt.STATE_DISCONNECTED -> "disconnected"
-                BluetoothGatt.STATE_DISCONNECTING -> "disconnecting"
-                else -> "unknown"
+            if(newState == BluetoothGatt.STATE_CONNECTED) {
+                targetGattDevice?.discoverServices()
             }
-            Log.i(TAG, "onConnectionStateChange to '$newStateStr' on BLE")
-        }
-
-        override fun onCharacteristicRead(
-            gatt: BluetoothGatt,
-            characteristic: BluetoothGattCharacteristic,
-            value: ByteArray,
-            status: Int
-        ) {
-            super.onCharacteristicRead(gatt, characteristic, value, status)
-            Log.i(TAG, "onCharacteristicRead: ")
-        }
-
-        override fun onCharacteristicWrite(
-            gatt: BluetoothGatt?,
-            characteristic: BluetoothGattCharacteristic?,
-            status: Int
-        ) {
-            super.onCharacteristicWrite(gatt, characteristic, status)
-            Log.i(TAG, "onCharacteristicWrite: ")
-        }
-
-        override fun onCharacteristicChanged(
-            gatt: BluetoothGatt,
-            characteristic: BluetoothGattCharacteristic,
-            value: ByteArray
-        ) {
-            super.onCharacteristicChanged(gatt, characteristic, value)
-            Log.i(TAG, "onCharacteristicChanged: ")
-        }
-
-        override fun onDescriptorRead(
-            gatt: BluetoothGatt,
-            descriptor: BluetoothGattDescriptor,
-            status: Int,
-            value: ByteArray
-        ) {
-            super.onDescriptorRead(gatt, descriptor, status, value)
-            Log.i(TAG, "onDescriptorRead: ")
-        }
-
-        override fun onDescriptorWrite(
-            gatt: BluetoothGatt?,
-            descriptor: BluetoothGattDescriptor?,
-            status: Int
-        ) {
-            super.onDescriptorWrite(gatt, descriptor, status)
-            Log.i(TAG, "onDescriptorWrite: ")
-        }
-
-        override fun onReliableWriteCompleted(gatt: BluetoothGatt?, status: Int) {
-            super.onReliableWriteCompleted(gatt, status)
-            Log.i(TAG, "onReliableWriteCompleted: ")
-        }
-
-        override fun onReadRemoteRssi(gatt: BluetoothGatt?, rssi: Int, status: Int) {
-            super.onReadRemoteRssi(gatt, rssi, status)
-            Log.i(TAG, "onReadRemoteRssi: ")
-        }
-
-        override fun onMtuChanged(gatt: BluetoothGatt?, mtu: Int, status: Int) {
-            super.onMtuChanged(gatt, mtu, status)
-            Log.i(TAG, "onMtuChanged: ")
-        }
-
-        override fun onServiceChanged(gatt: BluetoothGatt) {
-            super.onServiceChanged(gatt)
-            Log.i(TAG, "onServiceChanged: ")
         }
     }
-
     private var targetScanResult: ScanResult? = null
+    private var targetGattDevice: BluetoothGatt? = null
+    private val discoveredGattData: MutableMap<String, List<String>> = mutableMapOf()
 
     @Given("I have configured the Bluetooth scanner")
     fun setupBleStuff() {
@@ -178,30 +94,84 @@ class BluetoothSteps
         Log.i(TAG, "verifyTargetScanResult: verify ${targetScanResult?.device?.name}")
     }
 
-    @When("I connect to the target device")
-    fun connectToTargetDevice() {
+    @When("I connect to the target device with a {int} second timeout")
+    fun connectToTargetDevice(timeout: Int) = runBlocking {
         assertNotNull(bluetoothAdapter)
         assertNotNull(targetScanResult)
         val targetDevice = bluetoothAdapter!!.getRemoteDevice(targetScanResult!!.device.address)
-        targetDevice.connectGatt(scenario.appContext, false, gattCallback)
+        discoveredGattData.clear()
+        targetGattDevice = targetDevice.connectGatt(scenario.appContext, false, gattCallback)
+        delay(timeout * 1000L)
     }
 
-    @When("I wait for the connection")
-    fun connectDelay() = runBlocking {
-        delay(5000)
-        Log.i(TAG, "connectDelay: finish")
+    @Then("it should have discovered all GATT Services on the device")
+    fun verifyGattServiceDiscovery() {
+        assertNotNull(targetGattDevice)
+        assertNotEquals(0, discoveredGattData.size)
+
+        val genericAccessUUID = bleGattServiceMap["Generic Access"]
+        assertTrue(discoveredGattData.containsKey(genericAccessUUID))
+        val genericAttributeUUID = bleGattServiceMap["Generic Attribute"]
+        assertTrue(discoveredGattData.containsKey(genericAttributeUUID))
+    }
+
+    @Then("one of the discovered GATT Services is {string} with the {string} GATT Characteristic")
+    fun verifyCharacteristicDiscovery(serviceName: String, characteristicName: String) {
+        assertNotNull(targetGattDevice)
+        assertNotEquals(0, discoveredGattData.size)
+
+        val expectedServiceUUID = bleGattServiceMap[serviceName]
+        assertNotNull(expectedServiceUUID)
+
+        val expectedCharacteristicUUID = bleGattCharacteristicMap[characteristicName]
+        assertNotNull(expectedCharacteristicUUID)
+
+        val actualCharacteristics = discoveredGattData[expectedServiceUUID]
+        assertNotNull(actualCharacteristics)
+        val isCharacteristicDiscovered: Boolean = actualCharacteristics?.contains(expectedCharacteristicUUID) == true
+        assertTrue(isCharacteristicDiscovered)
     }
 
     companion object {
         private const val TAG = "BluetoothSteps"
         private val bleGattServiceMap: Map<String, String> = mapOf(
+            "Generic Access" to bleUUID("1800"),
+            "Generic Attribute" to bleUUID("1801"),
             "Health Thermometer" to bleUUID("1809"),
-            "Current Time" to bleUUID("1805")
+            "Current Time" to bleUUID("1805"),
+            "Battery" to bleUUID("180F"),
+            "Device Information" to bleUUID("180A")
+        )
+        private val bleGattCharacteristicMap: Map<String, String> = mapOf(
+            "Current Time" to bleUUID("2A2B"),
+            "Battery Level" to bleUUID("2A19"),
+            "Manufacturer Name" to bleUUID("2A29"),
+            "Model Number" to bleUUID("2A24"),
+            "Serial Number" to bleUUID("2A25"),
+            "Hardware Revision" to bleUUID("2A27"),
+            "Firmware Revision" to bleUUID("2A26"),
+            "Software Revision" to bleUUID("2A28"),
+            "System Identifier" to bleUUID("2A23"),
+            "Regulatory Certification" to bleUUID("2A2A"),
+            "Pnp Identifier" to bleUUID("2A50")
         )
 
-        private fun bleUUID(shortUUID: String) = "0000${shortUUID}-0000-1000-8000-00805f9b34fb"
+        private fun bleUUID(shortUUID: String) = "0000${shortUUID.lowercase()}-0000-1000-8000-00805f9b34fb"
     }
 
     @After
     fun stopBluetoothScan() = bluetoothLeScanner?.stopScan(scanCallback)
+
+    @After
+    fun stopBluetoothGatt() = targetGattDevice?.disconnect()
+
+    private fun displayGattServices(gattServices: List<BluetoothGattService>?) {
+        gattServices?.forEach {
+            val serviceUUID = it.uuid.toString()
+            val charaData = it.characteristics.map { gattCharacteristic ->
+                gattCharacteristic.uuid.toString()
+            }
+            discoveredGattData[serviceUUID] = charaData
+        }
+    }
 }
