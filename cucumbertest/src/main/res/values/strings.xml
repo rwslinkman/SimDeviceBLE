@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">SimDeviceBLE Cucumber TestApp</string>
+    <string name="btn_appsettings">Open permissions settings</string>
+    <string name="lbl_permission_check">Permission Status</string>
+    <string name="lbl_permission_check_subtitle">The appropriate permissions must be granted to use this app for Cucumber testing of the SimDeviceBLE app</string>
+    <string name="lbl_permission_bluetooth">Bluetooth Permissions</string>
+    <string name="lbl_permission_location">Location Permissions</string>
+    <string name="lbl_permission_other">Other Permissions</string>
+</resources>

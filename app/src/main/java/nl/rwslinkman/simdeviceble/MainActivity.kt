@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity() {
 
             appModel.bluetoothEnabled.postValue(it.isEnabled)
             appModel.bluetoothAdvertisingSupported.postValue(it.isMultipleAdvertisementSupported)
-            appModel.advertisementName.postValue(it.name)
+//            appModel.advertisementName.postValue(it.name)
         }
     }
 
