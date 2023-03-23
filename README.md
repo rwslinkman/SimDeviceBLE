@@ -64,8 +64,8 @@ Execute the `androidTest` tests in the `cucumberTest` module to test the gRPC se
 It requires a separate device running SimDeviceBLE in gRPC Mode.   
 This mode can be found in the context menu of the SimDeviceBLE app.   
 
-The Cucumber tests demonstrate a way SimDeviceBLE can contribute to your automated testing.
-Your project could create a similar configuration so SimDeviceBLE can contribute to your automated testing.
+The Cucumber tests demonstrate a way SimDeviceBLE can contribute to your automated testing.   
+Your project could create a similar configuration using the gRPC client.
 
 ## Contributing
 Please feel free to add any devices in the `nl.rwslinkman.simdeviceble.device` package.   
