@@ -23,7 +23,7 @@ class AdvertisementManager(
             isInitialValue: Boolean
         )
 
-        fun setIsAdvertising(isAdvertising: Boolean)
+        fun setIsAdvertising(isAdvertising: Boolean, advertisedDevice: String? = null)
         fun onDeviceConnected(deviceAddress: String)
         fun onDeviceDisconnected(deviceAddress: String)
     }
@@ -230,7 +230,7 @@ class AdvertisementManager(
         override fun onStartSuccess(settingsInEffect: AdvertiseSettings?) {
             super.onStartSuccess(settingsInEffect)
             Log.d(TAG, "onStartSuccess: ")
-            listener?.setIsAdvertising(true)
+            listener?.setIsAdvertising(true, advertiseCommand.device.name)
         }
 
         override fun onStartFailure(errorCode: Int) {

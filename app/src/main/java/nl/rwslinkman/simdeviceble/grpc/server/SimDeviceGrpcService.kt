@@ -52,6 +52,7 @@ class SimDeviceGrpcService(
             responseObserver?.onNext(responseBuilder.build())
             responseObserver?.onCompleted()
         } catch (t: Throwable) {
+            t.printStackTrace()
             responseObserver?.onError(t)
         }
     }

@@ -1,2 +1,3 @@
-include ':app'
 rootProject.name = "SimDeviceBLE"
+include ':app'
+include ':cucumbertest'

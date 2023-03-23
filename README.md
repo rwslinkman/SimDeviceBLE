@@ -14,7 +14,7 @@ Run the `app` on your Android phone.
 
 Make sure Bluetooth is enabled on your phone (use `Enable Bluetooth` button) and advertise a selected device.   
 The selected device will advertise the services associated to it.   
-All options available in the `Advertise` section will be used in the Advertisment data.   
+All options available in the `Advertise` section will be used in the Advertisement data.   
 
 Characteristic values can be updated using the `Service Data` screen.   
 All characteristics will be mapped to a View on the screen to show their current data value.   
@@ -55,6 +55,17 @@ service SimDeviceBLE {
 }
 ```
 Please refer to the `grpc/SimDeviceBLE.proto` file for the full specification of the gRPC interface.
+
+## Automated testing
+The module `cucumbertest` contains a basic app that is used as a testing vehicle to verify SimDeviceBLE.      
+Tests written using the [Cucumber framework](https://github.com/cucumber/cucumber-android) are executed via this app.   
+
+Execute the `androidTest` tests in the `cucumberTest` module to test the gRPC server.      
+It requires a separate device running SimDeviceBLE in gRPC Mode.   
+This mode can be found in the context menu of the SimDeviceBLE app.   
+
+The Cucumber tests demonstrate a way SimDeviceBLE can contribute to your automated testing.
+Your project could create a similar configuration so SimDeviceBLE can contribute to your automated testing.
 
 ## Contributing
 Please feel free to add any devices in the `nl.rwslinkman.simdeviceble.device` package.   

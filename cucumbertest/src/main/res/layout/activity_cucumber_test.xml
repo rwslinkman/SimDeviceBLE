@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/img_permission_check"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/ic_success_black_24dp"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:contentDescription="@null"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        />
+
+    <TextView
+        android:id="@+id/lbl_permission_check"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/img_permission_check"
+        android:text="@string/lbl_permission_check"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/lbl_permission_check_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/lbl_permission_check"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:text="@string/lbl_permission_check_subtitle"
+        android:textSize="14sp"
+        android:gravity="center"
+        />
+
+    <RelativeLayout
+        android:id="@+id/box_permission_bluetooth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/lbl_permission_check_subtitle"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="40dp">
+
+        <ImageView
+            android:id="@+id/img_permission_bluetooth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/ic_bluetooth_black_24dp"
+            android:layout_marginEnd="10dp"
+            android:contentDescription="@null"
+            />
+
+        <TextView
+            android:id="@+id/lbl_permission_bluetooth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lbl_permission_bluetooth"
+            android:layout_toEndOf="@id/img_permission_bluetooth"
+            android:layout_alignTop="@id/img_permission_bluetooth"
+            android:layout_alignBottom="@id/img_permission_bluetooth"
+            android:layout_toStartOf="@id/img_permission_bluetooth_status"
+            android:gravity="center_vertical"
+            />
+
+        <ImageView
+            android:id="@+id/img_permission_bluetooth_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_warning_black_24dp"
+            android:contentDescription="@null"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/box_permission_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/box_permission_bluetooth"
+        android:layout_margin="20dp">
+
+        <ImageView
+            android:id="@+id/img_permission_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/ic_location_black_24dp"
+            android:layout_marginEnd="10dp"
+            android:contentDescription="@null"
+            />
+
+        <TextView
+            android:id="@+id/lbl_permission_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lbl_permission_location"
+            android:layout_toEndOf="@id/img_permission_location"
+            android:layout_alignTop="@id/img_permission_location"
+            android:layout_alignBottom="@id/img_permission_location"
+            android:layout_toStartOf="@id/img_permission_location_status"
+            android:gravity="center_vertical"
+            />
+
+        <ImageView
+            android:id="@+id/img_permission_location_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_warning_black_24dp"
+            android:contentDescription="@null"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/box_permission_other"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/box_permission_location"
+        android:layout_margin="20dp">
+
+        <ImageView
+            android:id="@+id/img_permission_other"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/ic_gear_black_24dp"
+            android:layout_marginEnd="10dp"
+            android:contentDescription="@null"
+            />
+
+        <TextView
+            android:id="@+id/lbl_permission_other"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lbl_permission_other"
+            android:layout_toEndOf="@id/img_permission_other"
+            android:layout_alignTop="@id/img_permission_other"
+            android:layout_alignBottom="@id/img_permission_other"
+            android:layout_toStartOf="@id/img_permission_other_status"
+            android:gravity="center_vertical"
+            />
+
+        <ImageView
+            android:id="@+id/img_permission_other_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_warning_black_24dp"
+            android:contentDescription="@null"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            />
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btn_app_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_appsettings"
+        app:layout_constraintTop_toBottomOf="@id/box_permission_other"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,13 +6,18 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import nl.rwslinkman.simdeviceble.R
+import java.text.SimpleDateFormat
+import java.util.*
 
 class EventListAdapter: RecyclerView.Adapter<EventListAdapter.EventViewHolder>() {
 
-    private val dataSet: MutableList<String> = mutableListOf()
+    private val dataSet: MutableList<Item> = mutableListOf()
+
+    data class Item(val data: String, val timestamp: Date = Date())
 
     class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val eventView: TextView = itemView.findViewById(R.id.item_grpc_event)
+        val dateView: TextView = itemView.findViewById(R.id.item_grpc_event_timestamp)
+        val eventView: TextView = itemView.findViewById(R.id.item_grpc_event_data)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
@@ -26,11 +31,15 @@ class EventListAdapter: RecyclerView.Adapter<EventListAdapter.EventViewHolder>()
     }
 
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
-        val event: String = dataSet[position]
-        holder.eventView.text = event
+        val event: Item = dataSet[position]
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss", Locale.getDefault())
+        val eventDate: String = sdf.format(event.timestamp)
+
+        holder.dateView.text = eventDate
+        holder.eventView.text = event.data
     }
 
-    fun addGrpcEvent(event: String) {
-        dataSet.add(event)
+    fun addGrpcEvent(eventItem: Item) {
+        dataSet.add(eventItem)
     }
 }
