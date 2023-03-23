@@ -20,3 +20,10 @@ Feature: Advertisement using gRPC server
     And the simulator is instructed to start advertising as a "Digital Clock" device
     And I start a BLE discovery for 5 seconds
     Then it has found the "Lenovo Tab P11 Pro" device advertising the "Current Time" service UUID
+
+  Scenario: Verifying the advertised services and characteristics for the advertised device
+    Given I have configured the Bluetooth scanner
+    And the simulator is instructed to start advertising as a "Digital Clock" device
+    When I start a BLE discovery for 5 seconds
+    And it has found the "Lenovo Tab P11 Pro" device advertising the "Current Time" service UUID
+    And I connect to the target device

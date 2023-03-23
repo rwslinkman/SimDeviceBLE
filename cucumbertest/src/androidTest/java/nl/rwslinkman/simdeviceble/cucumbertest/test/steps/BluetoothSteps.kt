@@ -1,5 +1,8 @@
 package nl.rwslinkman.simdeviceble.cucumbertest.test.steps
 
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothGatt
+import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
@@ -17,6 +20,7 @@ class BluetoothSteps
 {
     private val scenario: ActivityScenarioHolder = ActivityScenarioHolder()
 
+    private var bluetoothAdapter: BluetoothAdapter? = null
     private var bluetoothLeScanner: BluetoothLeScanner? = null
     private val scanResults: MutableList<ScanResult> = mutableListOf()
     private val scanCallback = object : ScanCallback() {
@@ -26,11 +30,20 @@ class BluetoothSteps
             result?.let { scanResults.add(it) }
         }
     }
+    private val gattCallback = object : BluetoothGattCallback() {
+        override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
+            super.onServicesDiscovered(gatt, status)
+            // TODO
+        }
+    }
+
+    private var targetScanResult: ScanResult? = null
 
     @Given("I have configured the Bluetooth scanner")
     fun setupBleStuff() {
         scenario.launchTestActivity()
-        bluetoothLeScanner = scenario.setupBluetoothScanner()
+        bluetoothAdapter = scenario.setupBluetoothScanner()
+        bluetoothLeScanner = bluetoothAdapter!!.bluetoothLeScanner
     }
 
     @When("I start a BLE discovery for {int} seconds")
@@ -57,13 +70,28 @@ class BluetoothSteps
         assertNotEquals("", expectedPrimaryServiceUUID)
 
         assertTrue(scanResults.isNotEmpty())
-        val targetScanResult = scanResults.find { it.device.name == deviceName }
+        targetScanResult = scanResults.find { it.device.name == deviceName }
+        assertNotNull("Target device was not found among scan results", targetScanResult)
         val serviceUUIDs = targetScanResult?.scanRecord?.serviceUuids
         assertNotNull(serviceUUIDs)
         assertTrue(serviceUUIDs!!.isNotEmpty())
 
         val actualServiceUUID = serviceUUIDs.find { it.uuid.toString() == expectedPrimaryServiceUUID }
         assertNotNull(actualServiceUUID)
+    }
+
+    @Then("the advertising data of the target device contains stuff")
+    fun verifyTargetScanResult() {
+        assertNotNull(targetScanResult)
+        Log.i(TAG, "verifyTargetScanResult: verify ${targetScanResult?.device?.name}")
+    }
+
+    @When("I connect to the target device")
+    fun connectToTargetDevice() {
+        assertNotNull(bluetoothAdapter)
+        assertNotNull(targetScanResult)
+        val targetDevice = bluetoothAdapter!!.getRemoteDevice(targetScanResult!!.device.address)
+        targetDevice.connectGatt(scenario.appContext, false, gattCallback)
     }
 
     companion object {
