@@ -12,6 +12,7 @@ import io.cucumber.java.en.When
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import nl.rwslinkman.simdeviceble.cucumbertest.test.ActivityScenarioHolder
+import nl.rwslinkman.simdeviceble.cucumbertest.test.grpc.AdvertisedCharacteristic
 import org.junit.Assert.*
 
 class BluetoothSteps
@@ -32,7 +33,7 @@ class BluetoothSteps
         override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
             super.onServicesDiscovered(gatt, status)
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                displayGattServices(targetGattDevice?.services)
+                collectGattServiceData(targetGattDevice?.services)
             }
         }
 
@@ -46,6 +47,9 @@ class BluetoothSteps
     private var targetScanResult: ScanResult? = null
     private var targetGattDevice: BluetoothGatt? = null
     private val discoveredGattData: MutableMap<String, List<String>> = mutableMapOf()
+
+    private val grpcClient = GrpcControlSteps().grpcClient // DependencyInjection would be better
+    private var advertisedCharacteristics: MutableList<AdvertisedCharacteristic> = mutableListOf()
 
     @Given("I have configured the Bluetooth scanner")
     fun setupBleStuff() {
@@ -132,6 +136,28 @@ class BluetoothSteps
         assertTrue(isCharacteristicDiscovered)
     }
 
+    @When("the simulator returns a list of advertised characteristics")
+    fun requestAdvertisedCharacteristicsList() {
+        val result = grpcClient.listAdvertisedCharacteristics()
+        assertNotNull(result)
+        assertNotEquals(0, result.size)
+        advertisedCharacteristics.clear()
+        advertisedCharacteristics.addAll(result)
+    }
+
+    @Then("the discovered GATT Characteristics are equal to the Advertised Characteristics on gRPC")
+    fun verifyGattEqualsGrpc() {
+        assertNotNull(discoveredGattData)
+        assertNotEquals(0, discoveredGattData)
+        assertNotNull(advertisedCharacteristics)
+        assertNotEquals(0, advertisedCharacteristics.size)
+
+        val allDiscoveredCharacteristics: List<String> = discoveredGattData.flatMap { it.value }
+        val allAdvertisedCharUUIDs: List<String> = advertisedCharacteristics.map { it.uuid }
+
+        assertTrue(allDiscoveredCharacteristics.containsAll(allAdvertisedCharUUIDs))
+    }
+
     companion object {
         private const val TAG = "BluetoothSteps"
         private val bleGattServiceMap: Map<String, String> = mapOf(
@@ -165,7 +191,7 @@ class BluetoothSteps
     @After
     fun stopBluetoothGatt() = targetGattDevice?.disconnect()
 
-    private fun displayGattServices(gattServices: List<BluetoothGattService>?) {
+    private fun collectGattServiceData(gattServices: List<BluetoothGattService>?) {
         gattServices?.forEach {
             val serviceUUID = it.uuid.toString()
             val charaData = it.characteristics.map { gattCharacteristic ->

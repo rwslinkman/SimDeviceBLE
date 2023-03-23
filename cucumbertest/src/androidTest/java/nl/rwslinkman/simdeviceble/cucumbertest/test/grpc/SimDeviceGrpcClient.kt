@@ -1,4 +1,4 @@
-package nl.rwslinkman.simdeviceble.cucumbertest.test
+package nl.rwslinkman.simdeviceble.cucumbertest.test.grpc
 
 import com.google.protobuf.ByteString
 import com.google.protobuf.Empty
@@ -11,7 +11,9 @@ class SimDeviceGrpcClient(targetIP: String, targetPort: Int) {
     private val grpcStub = SimDeviceBLEGrpc.newBlockingStub(commChannel)
 
     fun listAvailableSimDevices(): List<SimDevice> {
-        return grpcStub.listAvailableSimDevices(Empty.getDefaultInstance()).availableDevicesList
+        return grpcStub.listAvailableSimDevices(Empty.getDefaultInstance()).availableDevicesList.map {
+            SimDevice(it.name, it.primaryServiceUUID)
+        }
     }
 
     fun startAdvertisement(advertisedDevice: String, advertiseDeviceName: Boolean = true, connectable: Boolean = true): StartAdvertisementResponse? {
@@ -26,8 +28,11 @@ class SimDeviceGrpcClient(targetIP: String, targetPort: Int) {
         grpcStub.stopAdvertisement(Empty.getDefaultInstance())
     }
 
-    fun listAdvertisedCharacteristics(): ListAdvertisedCharacteristicsResponse? {
-        return grpcStub.listAdvertisedCharacteristics(Empty.getDefaultInstance())
+    fun listAdvertisedCharacteristics(): List<AdvertisedCharacteristic> {
+        val listAdvertisedCharacteristics = grpcStub.listAdvertisedCharacteristics(Empty.getDefaultInstance())
+        return listAdvertisedCharacteristics.advertisedCharacteristicsList.map {
+            AdvertisedCharacteristic(it.name, it.uuid, it.currentValue.toByteArray())
+        }
     }
 
     fun updateCharacteristicValue(uuid: String, updatedValue: ByteArray) {

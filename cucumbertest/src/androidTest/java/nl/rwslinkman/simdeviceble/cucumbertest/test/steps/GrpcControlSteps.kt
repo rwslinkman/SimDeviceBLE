@@ -4,13 +4,13 @@ import io.cucumber.java.After
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
-import nl.rwslinkman.simdeviceble.cucumbertest.test.SimDeviceGrpcClient
-import nl.rwslinkman.simdeviceble.grpc.server.SimDevice
+import nl.rwslinkman.simdeviceble.cucumbertest.test.grpc.SimDevice
+import nl.rwslinkman.simdeviceble.cucumbertest.test.grpc.SimDeviceGrpcClient
 import org.junit.Assert.*
 
 class GrpcControlSteps {
 
-    private val grpcClient = SimDeviceGrpcClient(tabletIP, grpcPort)
+    val grpcClient = SimDeviceGrpcClient(tabletIP, grpcPort)
 
     private var supportedDevicesResponse: List<SimDevice>? = null
 

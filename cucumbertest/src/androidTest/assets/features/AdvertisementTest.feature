@@ -1,6 +1,5 @@
 Feature: Advertisement using gRPC server
 
-  @ignored
   Scenario Outline: Starting to scan for advertising devices
     Given I have configured the Bluetooth scanner
     And the simulator is instructed to start advertising as a <simulatedDevice> device
@@ -12,7 +11,7 @@ Feature: Advertisement using gRPC server
     | "Digital Clock"     | 5             | "Lenovo Tab P11 Pro"      |
     | "Thermometer (Ear)" | 5             | "Lenovo Tab P11 Pro"      |
 
-  @ignored
+
   Scenario: Changing the type of device that is advertised
     Given I have configured the Bluetooth scanner
     And the simulator is instructed to start advertising as a "Thermometer (Ear)" device
@@ -30,7 +29,9 @@ Feature: Advertisement using gRPC server
     When I start a BLE discovery for 5 seconds
     And it has found the "Lenovo Tab P11 Pro" device advertising the "Current Time" service UUID
     And I connect to the target device with a 10 second timeout
+    And the simulator returns a list of advertised characteristics
     Then it should have discovered all GATT Services on the device
+    And the discovered GATT Characteristics are equal to the Advertised Characteristics on gRPC
     And one of the discovered GATT Services is "Current Time" with the "Current Time" GATT Characteristic
     And one of the discovered GATT Services is "Battery" with the "Battery Level" GATT Characteristic
     And one of the discovered GATT Services is "Device Information" with the "Manufacturer Name" GATT Characteristic
