@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.protobuf' version '0.9.4'
 }
 
 android {
@@ -25,10 +26,22 @@ android {
             java {
                 srcDirs += "build/generated/src"
             }
+            proto {
+                srcDirs = ["${project.rootDir}/grpc"]
+            }
+        }
+        androidTest {
+            java {
+                srcDirs += "build/generated/src"
+            }
+            proto {
+                srcDirs = ["${project.rootDir}/grpc"]
+            }
         }
     }
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
     buildTypes {
         release {
@@ -63,9 +76,35 @@ dependencies {
     androidTestImplementation "io.cucumber:cucumber-android:4.10.0"
     // gRPC dependencies, only used in test but generated in main/src
     implementation "io.grpc:grpc-okhttp:1.53.0"
-    implementation "io.grpc:grpc-protobuf:1.53.0"
+    implementation "io.grpc:grpc-protobuf-lite:1.53.0"
     implementation "io.grpc:grpc-stub:1.53.0"
     implementation "io.grpc:grpc-api:1.53.0"
     implementation 'javax.annotation:javax.annotation-api:1.3.2'
+    implementation "com.google.protobuf:protobuf-javalite:3.21.12"
+}
 
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.21.12"
+    }
+    plugins {
+        java {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.53.0'
+        }
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.53.0'
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                java {
+                    option 'lite'
+                }
+                grpc {
+                    option 'lite'
+                }
+            }
+        }
+    }
 }

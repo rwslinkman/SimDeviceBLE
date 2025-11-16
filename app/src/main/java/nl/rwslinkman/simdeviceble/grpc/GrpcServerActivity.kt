@@ -1,5 +1,6 @@
 package nl.rwslinkman.simdeviceble.grpc
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.os.Bundle
 import android.widget.TextView
@@ -13,6 +14,7 @@ import nl.rwslinkman.simdeviceble.grpc.server.GrpcCall
 import nl.rwslinkman.simdeviceble.grpc.server.GrpcEventListener
 import nl.rwslinkman.simdeviceble.grpc.server.GrpcServer
 
+@SuppressLint("MissingPermission")
 class GrpcServerActivity : AppCompatActivity() {
     // grpc
     private val grpcPort = 8911

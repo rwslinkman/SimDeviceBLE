@@ -52,15 +52,15 @@ class ServiceDataFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = servicesAdapter
         }
-        appModel.activeDevice.observe(this, Observer {
+        appModel.activeDevice.observe(viewLifecycleOwner, Observer {
             showDeviceServices()
         })
-        appModel.presentableDataContainer.observe(this, Observer {
+        appModel.presentableDataContainer.observe(viewLifecycleOwner, Observer {
             showDeviceServices()
         })
 
         // Toggle view visibility
-        appModel.isAdvertising.observe(this, Observer {
+        appModel.isAdvertising.observe(viewLifecycleOwner, Observer {
             notAdvertisingView.visibility = if (it) View.GONE else View.VISIBLE
             servicesView.visibility = if (it) View.VISIBLE else View.GONE
         })
