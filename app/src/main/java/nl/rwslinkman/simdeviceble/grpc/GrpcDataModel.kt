@@ -2,6 +2,7 @@ package nl.rwslinkman.simdeviceble.grpc
 
 import com.google.protobuf.ByteString
 import nl.rwslinkman.simdeviceble.AppModel
+import nl.rwslinkman.simdeviceble.SimDevices
 import nl.rwslinkman.simdeviceble.bluetooth.AdvertiseCommand
 import nl.rwslinkman.simdeviceble.bluetooth.AdvertisementManager
 import nl.rwslinkman.simdeviceble.device.model.Characteristic
@@ -96,5 +97,5 @@ class GrpcDataModel(private val advertisementManager: AdvertisementManager, priv
         return simCharBuilder.build()
     }
 
-    private fun allDevices(): List<Device> = AppModel.supportedDevices
+    private fun allDevices(): List<Device> = SimDevices.supportedDevices
 }

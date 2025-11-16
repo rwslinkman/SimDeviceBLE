@@ -4,20 +4,19 @@ import nl.rwslinkman.simdeviceble.device.model.Device
 import nl.rwslinkman.simdeviceble.device.model.Service
 import nl.rwslinkman.simdeviceble.service.battery.BatteryService
 import nl.rwslinkman.simdeviceble.service.deviceinformation.DeviceInformationService
-import nl.rwslinkman.simdeviceble.service.heartrate.HeartRateService
-import java.util.*
+import nl.rwslinkman.simdeviceble.service.environmentalsensing.EnvironmentalSensingService
+import java.util.UUID
 
-class HeartRatePeripheral: Device() {
-
+class RoomSensorDevice: Device() {
     override val name: String
-        get() = "Fitness Band (Chest)"
+        get() = "Room Sensor"
 
     override val primaryServiceUuid: UUID
-        get() = HeartRateService.SERVICE_UUID
+        get() = EnvironmentalSensingService.SERVICE_UUID
 
     override val services: List<Service>
         get() = listOf(
-            HeartRateService(),
+            EnvironmentalSensingService(),
             BatteryService(),
             DeviceInformationService()
         )

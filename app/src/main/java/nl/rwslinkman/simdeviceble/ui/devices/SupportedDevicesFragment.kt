@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import nl.rwslinkman.simdeviceble.AppModel
 import nl.rwslinkman.simdeviceble.R
+import nl.rwslinkman.simdeviceble.SimDevices
 
 class SupportedDevicesFragment : Fragment() {
 
@@ -22,7 +23,7 @@ class SupportedDevicesFragment : Fragment() {
         root.findViewById<RecyclerView>(R.id.supported_devices_list).apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
-            adapter = SupportedDevicesAdapter(AppModel.supportedDevices)
+            adapter = SupportedDevicesAdapter(SimDevices.supportedDevices)
         }
 
         return root

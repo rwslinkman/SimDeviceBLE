@@ -2,6 +2,7 @@ package nl.rwslinkman.simdeviceble
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import nl.rwslinkman.simdeviceble.SimDevices.supportedDevices
 import nl.rwslinkman.simdeviceble.bluetooth.AdvertisementManager
 import nl.rwslinkman.simdeviceble.bluetooth.BluetoothDelegate
 import nl.rwslinkman.simdeviceble.device.DigitalClock
@@ -97,11 +98,6 @@ class AppModel: ViewModel(), AdvertisementManager.Listener {
     companion object {
         const val sourcesLink: String = "https://github.com/rwslinkman/simdeviceble"
         const val developerLink: String = "https://rwslinkman.nl"
-        val supportedDevices: List<Device> = listOf(
-            HeartRatePeripheral(),
-            DigitalClock(),
-            EarThermometer()
-        )
         const val defaultAllowDeviceName: Boolean = true
         const val defaultIsConnectable: Boolean = true
     }

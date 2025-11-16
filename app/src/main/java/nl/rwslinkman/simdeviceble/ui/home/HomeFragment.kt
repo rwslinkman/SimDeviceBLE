@@ -16,6 +16,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import nl.rwslinkman.simdeviceble.AppModel
 import nl.rwslinkman.simdeviceble.R
+import nl.rwslinkman.simdeviceble.SimDevices
 import nl.rwslinkman.simdeviceble.device.model.Device
 
 
@@ -149,7 +150,7 @@ class HomeFragment : Fragment() {
         deviceSelectorAdapter = ArrayAdapter(
             activity as Context,
             R.layout.spinner_item_device,
-            AppModel.supportedDevices.map { it.name }
+            SimDevices.supportedDevices.map { it.name }
         )
         deviceSelectorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         deviceSelector.adapter = deviceSelectorAdapter
@@ -158,7 +159,7 @@ class HomeFragment : Fragment() {
 
     private fun updateSelectedDevice(selectedDeviceName: String) {
         val selectedDevice: Device? =
-            AppModel.supportedDevices.find { selectedDeviceName == it.name }
+            SimDevices.supportedDevices.find { selectedDeviceName == it.name }
         selectedDevice?.let {
             appModel.selectDevice(selectedDevice)
         }
