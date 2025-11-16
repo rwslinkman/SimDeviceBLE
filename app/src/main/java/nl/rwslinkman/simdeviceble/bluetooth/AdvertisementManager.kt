@@ -1,5 +1,6 @@
 package nl.rwslinkman.simdeviceble.bluetooth
 
+import android.annotation.SuppressLint
 import android.bluetooth.*
 import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.AdvertiseData
@@ -11,6 +12,7 @@ import nl.rwslinkman.simdeviceble.device.model.Characteristic
 import nl.rwslinkman.simdeviceble.device.model.Device
 import java.util.*
 
+@SuppressLint("MissingPermission")
 class AdvertisementManager(
     private val context: Context,
     bluetoothAdapter: BluetoothAdapter,

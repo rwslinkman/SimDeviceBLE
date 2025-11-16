@@ -53,15 +53,15 @@ class HomeFragment : Fragment() {
             root.findViewById(R.id.ble_status_advertising_value)
         val enableBluetoothBtn = root.findViewById<Button>(R.id.ble_enable_btn)
 
-        appModel.bluetoothSupported.observe(this, Observer {
+        appModel.bluetoothSupported.observe(viewLifecycleOwner, Observer {
             bleSupportedTextView.text = if (it) "Yes" else "No"
         })
 
-        appModel.bluetoothEnabled.observe(this, Observer {
+        appModel.bluetoothEnabled.observe(viewLifecycleOwner, Observer {
             bleEnabledTextView.text = if (it) "Yes" else "No"
         })
 
-        appModel.bluetoothAdvertisingSupported.observe(this, Observer {
+        appModel.bluetoothAdvertisingSupported.observe(viewLifecycleOwner, Observer {
             bleAdvertisingSupportedTextView.text = if (it) "Yes" else "No"
             enableBluetoothBtn.isEnabled = !it
         })
@@ -81,7 +81,7 @@ class HomeFragment : Fragment() {
         val advertiseStartBtn = root.findViewById<Button>(R.id.advertising_start_btn)
         val advertiseStopBtn = root.findViewById<Button>(R.id.advertising_stop_btn)
 
-        appModel.isAdvertising.observe(this, Observer {
+        appModel.isAdvertising.observe(viewLifecycleOwner, Observer {
             advertisingEnabledView.text = if (it) "Yes" else "No"
             // disable control while advertising
             deviceSelector.isEnabled = !it
@@ -91,25 +91,25 @@ class HomeFragment : Fragment() {
             advertiseStopBtn.isEnabled = it
         })
 
-        appModel.advertisementName.observe(this, Observer {
+        appModel.advertisementName.observe(viewLifecycleOwner, Observer {
             advertisementNameView.text = it
         })
 
         setupDeviceSelector(deviceSelector)
-        appModel.activeDevice.observe(this, Observer {
+        appModel.activeDevice.observe(viewLifecycleOwner, Observer {
                 val selectedName = it.name
                 val selectedItemPos = deviceSelectorAdapter.getPosition(selectedName)
                 deviceSelector.setSelection(selectedItemPos)
         })
 
-        appModel.isConnectable.observe(this, Observer {
+        appModel.isConnectable.observe(viewLifecycleOwner, Observer {
             connectableSwitch.isChecked = it
         })
         connectableSwitch.setOnCheckedChangeListener { _, isChecked ->
             appModel.isConnectable.postValue(isChecked)
         }
 
-        appModel.advertiseDeviceName.observe(this, Observer {
+        appModel.advertiseDeviceName.observe(viewLifecycleOwner, Observer {
             advertiseDeviceNameSwitch.isChecked = it
         })
         advertiseDeviceNameSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -128,7 +128,7 @@ class HomeFragment : Fragment() {
         //region Connections
         val currentConnectionCountView: TextView = root.findViewById(R.id.connections_current_value)
 
-        appModel.connectedDevices.observe(this, Observer {
+        appModel.connectedDevices.observe(viewLifecycleOwner, Observer {
             currentConnectionCountView.text = it.size.toString()
         })
         //endregion

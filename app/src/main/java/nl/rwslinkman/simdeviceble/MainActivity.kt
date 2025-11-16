@@ -1,5 +1,6 @@
 package nl.rwslinkman.simdeviceble
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.os.Bundle
@@ -20,7 +21,7 @@ import nl.rwslinkman.simdeviceble.device.model.Device
 import nl.rwslinkman.simdeviceble.grpc.GrpcServerActivity
 import java.util.*
 
-
+@SuppressLint("MissingPermission")
 class MainActivity : AppCompatActivity() {
 
     private val appModel: AppModel by viewModels()
